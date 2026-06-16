@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mock 4 · Tabbed Results — AlfaDev layout</title>
+<link rel="stylesheet" href="_base.css" />
+<style>
+  .chipbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 16px; }
+  .grid2 { display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand"><span class="brand-mark">A</span><span class="a">alfa</span><span class="d">dev</span></div>
+    <div class="prog">Bipolar I Depression (US) — RWD-backed</div>
+    <div class="spacer"></div>
+    <span class="badge primary">Real RWD</span>
+    <span class="badge success">LLM: gpt-5.2</span>
+    <button class="btn primary">💬 Assistant</button>
+  </div>
+
+  <div class="body">
+    <nav class="nav full">
+      <div class="navhead"><span class="caps">Modules</span><button class="iconbtn" title="Collapse">«</button></div>
+      <a class="navitem active"><span class="ico">📍</span><span class="lbl">Site &amp; PI</span><span class="code">01</span></a>
+      <a class="navitem"><span class="ico">▽</span><span class="lbl">Feasibility</span><span class="code">02</span></a>
+      <a class="navitem"><span class="ico">📈</span><span class="lbl">Enrollment</span><span class="code">03</span></a>
+      <a class="navitem"><span class="ico">🕸</span><span class="lbl">KOL Mapping</span><span class="code">04</span></a>
+      <a class="navitem"><span class="ico">📊</span><span class="lbl">Monitoring</span><span class="code">05</span></a>
+      <a class="navitem"><span class="ico">▤</span><span class="lbl">Population</span><span class="code">06</span></a>
+      <div class="foot">Phase-0 prototype · synthetic de-identified data · not for clinical use</div>
+    </nav>
+
+    <main class="main">
+      <div class="wrap">
+        <div class="note"><span class="tag">MOCK 4</span><b>Tabbed Results.</b> Keeps a familiar layout but <b>collapses the long vertical scroll</b>: filters become a compact <b>chip bar</b>, the map stays pinned, and everything below (Leaderboard · Scorecard · Diversity · Insights · Shortlist) moves into a single <b>tabbed panel</b>. One screen, no endless scrolling.</div>
+
+        <div class="mhead">
+          <div>
+            <div style="display:flex;gap:8px;align-items:center"><span class="mono faint" style="font-size:12px">Module 01</span><span class="badge primary">Demo</span></div>
+            <h1>Site &amp; PI identification</h1>
+            <p>Where should we run, and which PIs can deliver? Tune catchment, supply and diversity — everything recomputes live.</p>
+          </div>
+          <div class="acts"><button class="btn secondary">↓ CSV</button></div>
+        </div>
+
+        <!-- compact active-filter chip bar with an edit affordance -->
+        <div class="chipbar">
+          <button class="btn ghost" style="padding:6px 12px">⌗ Edit filters</button>
+          <span class="pill">Catchment: 50 mi <span class="x">▾</span></span>
+          <span class="pill">Min eligible: 0 <span class="x">▾</span></span>
+          <span class="pill">Regions: All</span>
+          <span class="pill on">Psychiatry ✕</span>
+          <span class="pill">Diversity: off</span>
+        </div>
+
+        <div class="kpis" style="margin-bottom:16px">
+          <div class="kpi"><div class="lbl">Eligible pool</div><div class="val">42,762</div><div class="sub">from feasibility cascade</div></div>
+          <div class="kpi b2"><div class="lbl">Sites matching</div><div class="val">26</div><div class="sub">26 total</div></div>
+          <div class="kpi b3"><div class="lbl">Eligible across sites</div><div class="val">3,356</div></div>
+          <div class="kpi b4"><div class="lbl">Avg score</div><div class="val">0.31</div></div>
+        </div>
+
+        <div class="card" style="margin-bottom:16px">
+          <div class="ch"><span class="seclbl">Geographic footprint — sites, HCPs &amp; referral network</span><span class="pill"><span style="color:var(--gold)">●</span> HCPs on</span></div>
+          <div class="cb">
+            <div class="map" style="height:360px">
+              <div class="usa">United States · sites + HCP network</div>
+              <div class="zoom"><button>+</button><button>−</button></div>
+              <div class="maptools"><span class="pill on">⤢ Fit</span><span class="pill">Decile 7+ ▾</span></div>
+              <div class="maphint">Click a site → HCPs within 50 mi · click an HCP → referral network</div>
+              <div class="pin" style="left:30%;top:55%"><span>+</span></div>
+              <div class="pin" style="left:62%;top:40%"><span>+</span></div>
+              <div class="pin" style="left:74%;top:62%"><span>+</span></div>
+              <div class="dot ref" style="left:33%;top:48%"></div><div class="dot" style="left:28%;top:62%"></div>
+              <div class="dot ref" style="left:58%;top:34%"></div><div class="dot" style="left:66%;top:46%"></div>
+              <div class="dot" style="left:70%;top:56%"></div><div class="dot ref" style="left:78%;top:66%"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- tabbed results panel -->
+        <div class="card">
+          <div class="tabs">
+            <div class="tab on">Leaderboard</div>
+            <div class="tab">Scorecard</div>
+            <div class="tab">Diversity</div>
+            <div class="tab">Untapped PIs</div>
+            <div class="tab">Whitespace</div>
+            <div class="tab">Shortlist <span class="badge neutral" style="margin-left:6px">2</span></div>
+          </div>
+          <div class="cb">
+            <table class="t">
+              <thead><tr><th>Rank</th><th>Site</th><th>Region</th><th>State</th><th style="text-align:right">Eligible</th><th style="text-align:right">PI trials</th><th style="text-align:right">Rx vol</th><th style="text-align:right">Competing</th><th style="text-align:right">Score</th></tr></thead>
+              <tbody>
+                <tr class="sel"><td class="num">1</td><td class="name">Atlanta Neuropsych</td><td>Southeast</td><td>GA</td><td class="num">312</td><td class="num">9</td><td class="num">4,120</td><td class="num">2</td><td class="num">0.61</td></tr>
+                <tr><td class="num">2</td><td class="name">Houston BH Center</td><td>Southwest</td><td>TX</td><td class="num">288</td><td class="num">7</td><td class="num">3,880</td><td class="num">3</td><td class="num">0.54</td></tr>
+                <tr><td class="num">3</td><td class="name">Phoenix Mind Clinic</td><td>West</td><td>AZ</td><td class="num">241</td><td class="num">5</td><td class="num">3,210</td><td class="num">1</td><td class="num">0.49</td></tr>
+                <tr><td class="num">4</td><td class="name">Tampa Research</td><td>Southeast</td><td>FL</td><td class="num">205</td><td class="num">6</td><td class="num">2,940</td><td class="num">4</td><td class="num">0.44</td></tr>
+                <tr><td class="num">5</td><td class="name">Denver Behavioral</td><td>West</td><td>CO</td><td class="num">188</td><td class="num">4</td><td class="num">2,610</td><td class="num">2</td><td class="num">0.40</td></tr>
+                <tr><td class="num">6</td><td class="name">Boston Mood Lab</td><td>Northeast</td><td>MA</td><td class="num">176</td><td class="num">8</td><td class="num">2,480</td><td class="num">5</td><td class="num">0.38</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+</body>
+</html>

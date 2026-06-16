@@ -1,0 +1,5106 @@
+{
+  "seed": 0,
+  "dataVersion": "2026-06-rwd-01",
+  "program": "Bipolar I Depression (US) — RWD-backed",
+  "totalUniverse": 437375,
+  "criteria": [
+    {
+      "id": "dx_bipolar1",
+      "type": "inclusion",
+      "label": "Bipolar I disorder diagnosis",
+      "category": "diagnosis",
+      "enabled": true,
+      "isProxy": false,
+      "proxyNote": null,
+      "confidence": null,
+      "codes": [
+        "ICD-10 F31.1x",
+        "F31.2x",
+        "F31.6x"
+      ],
+      "baseReductionPct": 0.0,
+      "param": null,
+      "paramSlope": 0.0,
+      "dataSource": null
+    },
+    {
+      "id": "inc_current_mde",
+      "type": "inclusion",
+      "label": "Current major depressive episode",
+      "category": "episode",
+      "enabled": true,
+      "isProxy": true,
+      "proxyNote": "Approximated from claim recency + a treatment change within the lookback window.",
+      "confidence": "medium",
+      "codes": [
+        "F31.3x",
+        "F31.4",
+        "F31.5"
+      ],
+      "baseReductionPct": 55.0,
+      "param": {
+        "name": "lookbackDays",
+        "value": 90.0,
+        "min": 30.0,
+        "max": 365.0,
+        "step": 15.0,
+        "default": 90.0,
+        "unit": "days"
+      },
+      "paramSlope": -25.0,
+      "dataSource": null
+    },
+    {
+      "id": "inc_age",
+      "type": "inclusion",
+      "label": "Age 18 to upper limit",
+      "category": "demographic",
+      "enabled": true,
+      "isProxy": false,
+      "proxyNote": "Reduction computed from the real RWD age histogram.",
+      "confidence": null,
+      "codes": [
+        "—"
+      ],
+      "baseReductionPct": 12.0,
+      "param": {
+        "name": "maxAge",
+        "value": 65.0,
+        "min": 18.0,
+        "max": 80.0,
+        "step": 1.0,
+        "default": 65.0,
+        "unit": "years"
+      },
+      "paramSlope": -10.0,
+      "dataSource": "age_histogram"
+    },
+    {
+      "id": "inc_severity",
+      "type": "inclusion",
+      "label": "Moderate-to-severe depression (MADRS ≥ 20)",
+      "category": "severity",
+      "enabled": true,
+      "isProxy": true,
+      "proxyNote": "No MADRS in claims. Approximated from treatment intensity, polypharmacy, recent hospitalization, and ECT.",
+      "confidence": "low",
+      "codes": [
+        "proxy"
+      ],
+      "baseReductionPct": 35.0,
+      "param": {
+        "name": "severityStrictness",
+        "value": 50.0,
+        "min": 0.0,
+        "max": 100.0,
+        "step": 5.0,
+        "default": 50.0,
+        "unit": "index"
+      },
+      "paramSlope": 30.0,
+      "dataSource": null
+    },
+    {
+      "id": "inc_treatment_stable",
+      "type": "inclusion",
+      "label": "Stable mood stabilizer / antipsychotic",
+      "category": "treatment",
+      "enabled": true,
+      "isProxy": false,
+      "proxyNote": null,
+      "confidence": null,
+      "codes": [
+        "NDC mood stabilizers"
+      ],
+      "baseReductionPct": 25.0,
+      "param": {
+        "name": "stableWeeks",
+        "value": 4.0,
+        "min": 2.0,
+        "max": 12.0,
+        "step": 1.0,
+        "default": 4.0,
+        "unit": "weeks"
+      },
+      "paramSlope": 15.0,
+      "dataSource": null
+    },
+    {
+      "id": "exc_psychosis",
+      "type": "exclusion",
+      "label": "Active psychotic features",
+      "category": "psychiatric",
+      "enabled": true,
+      "isProxy": false,
+      "proxyNote": null,
+      "confidence": null,
+      "codes": [
+        "F31.2x with psychosis"
+      ],
+      "baseReductionPct": 10.0,
+      "param": null,
+      "paramSlope": 0.0,
+      "dataSource": null
+    },
+    {
+      "id": "exc_substance",
+      "type": "exclusion",
+      "label": "Substance use disorder",
+      "category": "substance",
+      "enabled": true,
+      "isProxy": true,
+      "proxyNote": "Claims under-capture SUD. Approximated from coded diagnoses + MAT prescriptions.",
+      "confidence": "low",
+      "codes": [
+        "F10-F19"
+      ],
+      "baseReductionPct": 18.0,
+      "param": {
+        "name": "sudStrictness",
+        "value": 50.0,
+        "min": 0.0,
+        "max": 100.0,
+        "step": 5.0,
+        "default": 50.0,
+        "unit": "index"
+      },
+      "paramSlope": 10.0,
+      "dataSource": null
+    },
+    {
+      "id": "exc_suicidality",
+      "type": "exclusion",
+      "label": "Recent suicidality / self-harm",
+      "category": "safety",
+      "enabled": true,
+      "isProxy": true,
+      "proxyNote": "Self-harm / ideation ICD codes + ER encounters. Understates true rate.",
+      "confidence": "low",
+      "codes": [
+        "R45.851",
+        "T14.91",
+        "Z91.5"
+      ],
+      "baseReductionPct": 8.0,
+      "param": null,
+      "paramSlope": 0.0,
+      "dataSource": null
+    },
+    {
+      "id": "exc_antipsychotic_washout",
+      "type": "exclusion",
+      "label": "Antipsychotic washout",
+      "category": "washout",
+      "enabled": true,
+      "isProxy": false,
+      "proxyNote": null,
+      "confidence": null,
+      "codes": [
+        "NDC antipsychotics"
+      ],
+      "baseReductionPct": 22.0,
+      "param": {
+        "name": "washoutDays",
+        "value": 14.0,
+        "min": 7.0,
+        "max": 42.0,
+        "step": 7.0,
+        "default": 14.0,
+        "unit": "days"
+      },
+      "paramSlope": 20.0,
+      "dataSource": null
+    },
+    {
+      "id": "exc_renal_hepatic",
+      "type": "exclusion",
+      "label": "Significant renal/hepatic impairment",
+      "category": "comorbidity",
+      "enabled": true,
+      "isProxy": false,
+      "proxyNote": null,
+      "confidence": null,
+      "codes": [
+        "N18.x",
+        "K70-K77"
+      ],
+      "baseReductionPct": 6.0,
+      "param": null,
+      "paramSlope": 0.0,
+      "dataSource": null
+    },
+    {
+      "id": "exc_pregnancy",
+      "type": "exclusion",
+      "label": "Pregnancy / breastfeeding",
+      "category": "safety",
+      "enabled": true,
+      "isProxy": false,
+      "proxyNote": null,
+      "confidence": null,
+      "codes": [
+        "Z33.1",
+        "O09.x",
+        "Z39.1"
+      ],
+      "baseReductionPct": 4.0,
+      "param": null,
+      "paramSlope": 0.0,
+      "dataSource": null
+    },
+    {
+      "id": "exc_recent_trial",
+      "type": "exclusion",
+      "label": "Other investigational trial < 30 days",
+      "category": "washout",
+      "enabled": true,
+      "isProxy": false,
+      "proxyNote": null,
+      "confidence": null,
+      "codes": [
+        "—"
+      ],
+      "baseReductionPct": 5.0,
+      "param": null,
+      "paramSlope": 0.0,
+      "dataSource": null
+    }
+  ],
+  "sites": [
+    {
+      "id": "site_001",
+      "name": "Pillar Clinical Research",
+      "lat": 36.3728,
+      "lng": -94.2088,
+      "region": "Southeast",
+      "state": "AR",
+      "baseShare": 0.00063,
+      "piExperienceTrials": 5,
+      "indicationRxVolume": 1317,
+      "competingTrials": 3,
+      "specialties": [
+        "Psychiatry"
+      ],
+      "demographics": {
+        "blackPct": 11.6,
+        "hispanicPct": 4.5,
+        "asianPct": 9.0,
+        "whitePct": 74.8,
+        "femalePct": 66.5,
+        "ruralPct": 0.0
+      },
+      "npi": null,
+      "address": null,
+      "city": "Bentonville",
+      "status": "Recruiting",
+      "primaryContact": "Fayz Hudefi, MD",
+      "phone": "479-367-2688",
+      "email": "studies@pillarhc.com",
+      "eligiblePatients": 0,
+      "score": 0.0,
+      "diversityFit": 0.0
+    },
+    {
+      "id": "site_002",
+      "name": "Pillar Clinical Research",
+      "lat": 34.7465,
+      "lng": -92.2896,
+      "region": "Southeast",
+      "state": "AR",
+      "baseShare": 0.00063,
+      "piExperienceTrials": 5,
+      "indicationRxVolume": 1317,
+      "competingTrials": 3,
+      "specialties": [
+        "Psychiatry"
+      ],
+      "demographics": {
+        "blackPct": 11.6,
+        "hispanicPct": 4.5,
+        "asianPct": 9.0,
+        "whitePct": 74.8,
+        "femalePct": 66.5,
+        "ruralPct": 0.0
+      },
+      "npi": null,
+      "address": null,
+      "city": "Little Rock",
+      "status": "Recruiting",
+      "primaryContact": "Leslie Smith, MD",
+      "phone": "501-307-1919",
+      "email": "studies@pillarhc.com",
+      "eligiblePatients": 0,
+      "score": 0.0,
+      "diversityFit": 0.0
+    },
+    {
+      "id": "site_003",
+      "name": "CenExel",
+      "lat": 33.8817,
+      "lng": -118.117,
+      "region": "West",
+      "state": "CA",
+      "baseShare": 0.00143,
+      "piExperienceTrials": 109,
+      "indicationRxVolume": 13572,
+      "competingTrials": 131,
+      "specialties": [
+        "Psychiatry"
+      ],
+      "demographics": {
+        "blackPct": 10.8,
+        "hispanicPct": 35.2,
+        "asianPct": 7.5,
+        "whitePct": 46.6,
+        "femalePct": 66.5,
+        "ruralPct": 0.0
+      },
+      "npi": null,
+      "address": null,
+      "city": "Bellflower",
+      "status": "Recruiting",
+      "primaryContact": "Maria Nunez Perez",
+      "phone": "866-478-8391",
+      "email": "m.nunezperez@cenexel.com",
+      "eligiblePatients": 0,
+      "score": 0.0,
+      "diversityFit": 0.0
+    },
+    {
+      "id": "site_004",
+      "name": "ProScience Research Group",
+      "lat": 34.0211,
+      "lng": -118.3965,
+      "region": "West",
+      "state": "CA",
+      "baseShare": 0.00143,
+      "piExperienceTrials": 109,
+      "indicationRxVolume": 13572,
+      "competingTrials": 131,
+      "specialties": [
+        "Psychiatry"
+      ],
+      "demographics": {
+        "blackPct": 10.8,
+        "hispanicPct": 35.2,
+        "asianPct": 7.5,
+        "whitePct": 46.6,
+        "femalePct": 66.5,
+        "ruralPct": 0.0
+      },
+      "npi": null,
+      "address": null,
+      "city": "Culver City",
+      "status": "Recruiting",
+      "primaryContact": "Paola Aguirre",
+      "phone": "424-227-8127",
+      "email": "paola.aguirre@proscienceerg.com",
+      "eligiblePatients": 0,
+      "score": 0.0,
+      "diversityFit": 0.0
+    },
+    {
+      "id": "site_005",
+      "name": "CenExel",
+      "lat": 33.7739,
+      "lng": -117.9415,
+      "region": "West",
+      "state": "CA",
+      "baseShare": 0.00143,
+      "piExperienceTrials": 109,
+      "indicationRxVolume": 13572,
+      "competingTrials": 131,
+      "specialties": [
+        "Psychiatry"
+      ],
+      "demographics": {
+        "blackPct": 10.8,
+        "hispanicPct": 35.2,
+        "asianPct": 7.5,
+        "whitePct": 46.6,
+        "femalePct": 66.5,
+        "ruralPct": 0.0
+      },
+      "npi": null,
+      "address": null,
+      "city": "Garden Grove",
+      "status": "Recruiting",
+      "primaryContact": "Dakota Gainers",
+      "phone": "714-943-5874",
+      "email": "d.gainers@cenexel.com",
+      "eligiblePatients": 0,
+      "score": 0.0,
+      "diversityFit": 0.0
+    },
+    {
+      "id": "site_006",
+      "name": "Synergy San Diego",
+      "lat": 32.7426,
+      "lng": -117.0314,
+      "region": "West",
+      "state": "CA",
+      "baseShare": 0.00143,
+      "piExperienceTrials": 109,
+      "indicationRxVolume": 13572,
+      "competingTrials": 131,
+      "specialties": [
+        "Psychiatry"
+      ],
+      "demographics": {
+        "blackPct": 10.8,
+        "hispanicPct": 35.2,
+        "asianPct": 7.5,
+        "whitePct": 46.6,
+        "femalePct": 66.5,
+        "ruralPct": 0.0
+      },
+      "npi": null,
+      "address": null,
+      "city": "Lemon Grove",
+      "status": "Recruiting",
+      "primaryContact": "Corey Weise",
+      "phone": "619-303-6130",
+      "email": "cweise@ergclinical.com",
+      "eligiblePatients": 0,
+      "score": 0.0,
+      "diversityFit": 0.0
+    },
+    {
+      "id": "site_007",
+      "name": "NRC Research Institute",
+      "lat": 34.0522,
+      "lng": -118.2437,
+      "region": "West",
+      "state": "CA",
+      "baseShare": 0.00143,
+      "piExperienceTrials": 109,
+      "indicationRxVolume": 13572,
+      "competingTrials": 131,
+      "specialties": [
+        "Psychiatry"
+      ],
+      "demographics": {
+        "blackPct": 10.8,
+        "hispanicPct": 35.2,
+        "asianPct": 7.5,
+        "whitePct": 46.6,
+        "femalePct": 66.5,
+        "ruralPct": 0.0
+      },
+      "npi": null,
+      "address": null,
+      "city": "Los Angeles",
+      "status": "Recruiting",
+      "primaryContact": "Abigail Parera",
+      "phone": "213-992-9216",
+      "email": "aparera@nrcresearch.com",
+      "eligiblePatients": 0,
+      "score": 0.0,
+      "diversityFit": 0.0
+    },
+    {
+      "id": "site_008",
+      "name": "NRC Research Institute",
+      "lat": 33.7878,
+      "lng": -117.8531,
+      "region": "West",
+      "state": "CA",
+      "baseShare": 0.00143,
+      "piExperienceTrials": 109,
+      "indicationRxVolume": 13572,
+      "competingTrials": 131,
+      "specialties": [
+        "Psychiatry"
+      ],
+      "demographics": {
+        "blackPct": 10.8,
+        "hispanicPct": 35.2,
+        "asianPct": 7.5,
+        "whitePct": 46.6,
+        "femalePct": 66.5,
+        "ruralPct": 0.0
+      },
+      "npi": null,
+      "address": null,
+      "city": "Orange",
+      "status": "Recruiting",
+      "primaryContact": "Abigail Parera",
+      "phone": "714-943-5874",
+      "email": "aparera@nrcresearch.com",
+      "eligiblePatients": 0,
+      "score": 0.0,
+      "diversityFit": 0.0
+    },
+    {
+      "id": "site_009",
+      "name": "CenExel",
+      "lat": 33.9534,
+      "lng": -117.3962,
+      "region": "West",
+      "state": "CA",
+      "baseShare": 0.00143,
+      "piExperienceTrials": 109,
+      "indicationRxVolume": 13572,
+      "competingTrials": 131,
+      "specialties": [
+        "Psychiatry"
+      ],
+      "demographics": {
+        "blackPct": 10.8,
+        "hispanicPct": 35.2,
+        "asianPct": 7.5,
+        "whitePct": 46.6,
+        "femalePct": 66.5,
+        "ruralPct": 0.0
+      },
+      "npi": null,
+      "address": null,
+      "city": "Riverside",
+      "status": "Recruiting",
+      "primaryContact": "Maria Nunez Perez",
+      "phone": "866-478-2688",
+      "email": "m.nunezperez@cenexel.com",
+      "eligiblePatients": 0,
+      "score": 0.0,
+      "diversityFit": 0.0
+    },
+    {
+      "id": "site_010",
+      "name": "CenExel",
+      "lat": 33.8359,
+      "lng": -118.3406,
+      "region": "West",
+      "state": "CA",
+      "baseShare": 0.00143,
+      "piExperienceTrials": 109,
+      "indicationRxVolume": 13572,
+      "competingTrials": 131,
+      "specialties": [
+        "Psychiatry"
+      ],
+      "demographics": {
+        "blackPct": 10.8,
+        "hispanicPct": 35.2,
+        "asianPct": 7.5,
+        "whitePct": 46.6,
+        "femalePct": 66.5,
+        "ruralPct": 0.0
+      },
+      "npi": null,
+      "address": null,
+      "city": "Torrance",
+      "status": "Recruiting",
+      "primaryContact": null,
+      "phone": "844-424-9494",
+      "email": "ns.outreach@cenexel.com",
+      "eligiblePatients": 0,
+      "score": 0.0,
+      "diversityFit": 0.0
+    },
+    {
+      "id": "site_011",
+      "name": "St. Jude Clinical Research",
+      "lat": 25.8195,
+      "lng": -80.3553,
+      "region": "Southeast",
+      "state": "FL",
+      "baseShare": 0.0024,
+      "piExperienceTrials": 75,
+      "indicationRxVolume": 13895,
+      "competingTrials": 72,
+      "specialties": [
+        "Psychiatry"
+      ],
+      "demographics": {
+        "blackPct": 13.7,
+        "hispanicPct": 29.2,
+        "asianPct": 2.8,
+        "whitePct": 54.2,
+        "femalePct": 66.5,
+        "ruralPct": 0.0
+      },
+      "npi": null,
+      "address": null,
+      "city": "Doral",
+      "status": "Recruiting",
+      "primaryContact": null,
+      "phone": "305-507-2273",
+      "email": "slinares@stjudeclinicalresearch.com",
+      "eligiblePatients": 0,
+      "score": 0.0,
+      "diversityFit": 0.0
+    },
+    {
+      "id": "site_012",
+      "name": "Cenexel Hollywood Florida",
+      "lat": 26.0112,
+      "lng": -80.1495,
+      "region": "Southeast",
+      "state": "FL",
+      "baseShare": 0.0024,
+      "piExperienceTrials": 75,
+      "indicationRxVolume": 13895,
+      "competingTrials": 72,
+      "specialties": [
+        "Psychiatry"
+      ],
+      "demographics": {
+        "blackPct": 13.7,
+        "hispanicPct": 29.2,
+        "asianPct": 2.8,
+        "whitePct": 54.2,
+        "femalePct": 66.5,
+        "ruralPct": 0.0
+      },
+      "npi": null,
+      "address": null,
+      "city": "Hollywood",
+      "status": "Recruiting",
+      "primaryContact": "Edwin Gomez, MD",
+      "phone": "954-990-7649",
+      "email": "e.gomez@cenexel.com",
+      "eligiblePatients": 0,
+      "score": 0.0,
+      "diversityFit": 0.0
+    },
+    {
+      "id": "site_013",
+      "name": "Innovative Clinical Research",
+      "lat": 25.9087,
+      "lng": -80.3087,
+      "region": "Southeast",
+      "state": "FL",
+      "baseShare": 0.0024,
+      "piExperienceTrials": 75,
+      "indicationRxVolume": 13895,
+      "competingTrials": 72,
+      "specialties": [
+        "Psychiatry"
+      ],
+      "demographics": {
+        "blackPct": 13.7,
+        "hispanicPct": 29.2,
+        "asianPct": 2.8,
+        "whitePct": 54.2,
+        "femalePct": 66.5,
+        "ruralPct": 0.0
+      },
+      "npi": null,
+      "address": null,
+      "city": "Miami Lakes",
+      "status": "Recruiting",
+      "primaryContact": "Melissa Rodco",
+      "phone": "305-722-8444",
+      "email": "mrodco@segaltrials.com",
+      "eligiblePatients": 0,
+      "score": 0.0,
+      "diversityFit": 0.0
+    },
+    {
+      "id": "site_014",
+      "name": "Health Synergy Clinical Research",
+      "lat": 26.7153,
+      "lng": -80.0534,
+      "region": "Southeast",
+      "state": "FL",
+      "baseShare": 0.0024,
+      "piExperienceTrials": 75,
+      "indicationRxVolume": 13895,
+      "competingTrials": 72,
+      "specialties": [
+        "Psychiatry"
+      ],
+      "demographics": {
+        "blackPct": 13.7,
+        "hispanicPct": 29.2,
+        "asianPct": 2.8,
+        "whitePct": 54.2,
+        "femalePct": 66.5,
+        "ruralPct": 0.0
+      },
+      "npi": null,
+      "address": null,
+      "city": "West Palm Beach",
+      "status": "Recruiting",
+      "primaryContact": "Katherine Grigelis",
+      "phone": "561-473-3472",
+      "email": "kat@hscresearch.com",
+      "eligiblePatients": 0,
+      "score": 0.0,
+      "diversityFit": 0.0
+    },
+    {
+      "id": "site_015",
+      "name": "Trialmed",
+      "lat": 33.749,
+      "lng": -84.388,
+      "region": "Southeast",
+      "state": "GA",
+      "baseShare": 0.00213,
+      "piExperienceTrials": 23,
+      "indicationRxVolume": 6201,
+      "competingTrials": 26,
+      "specialties": [
+        "Psychiatry"
+      ],
+      "demographics": {
+        "blackPct": 30.9,
+        "hispanicPct": 5.6,
+        "asianPct": 2.1,
+        "whitePct": 61.4,
+        "femalePct": 66.5,
+        "ruralPct": 0.0
+      },
+      "npi": null,
+      "address": null,
+      "city": "Atlanta",
+      "status": "Recruiting",
+      "primaryContact": "Jennifer Flemming",
+      "phone": "678-559-1119",
+      "email": "jennifer.flemming@trialmed.com",
+      "eligiblePatients": 0,
+      "score": 0.0,
+      "diversityFit": 0.0
+    },
+    {
+      "id": "site_016",
+      "name": "Cenexel Decatur GA",
+      "lat": 33.7748,
+      "lng": -84.2963,
+      "region": "Southeast",
+      "state": "GA",
+      "baseShare": 0.00213,
+      "piExperienceTrials": 23,
+      "indicationRxVolume": 6201,
+      "competingTrials": 26,
+      "specialties": [
+        "Psychiatry"
+      ],
+      "demographics": {
+        "blackPct": 30.9,
+        "hispanicPct": 5.6,
+        "asianPct": 2.1,
+        "whitePct": 61.4,
+        "femalePct": 66.5,
+        "ruralPct": 0.0
+      },
+      "npi": null,
+      "address": null,
+      "city": "Decatur",
+      "status": "Recruiting",
+      "primaryContact": "Katherine Prowse",
+      "phone": "404-537-1281",
+      "email": "k.prowse@cenexel.com",
+      "eligiblePatients": 0,
+      "score": 0.0,
+      "diversityFit": 0.0
+    },
+    {
+      "id": "site_017",
+      "name": "Pillar Clinical Research",
+      "lat": 41.85,
+      "lng": -87.65,
+      "region": "Midwest",
+      "state": "IL",
+      "baseShare": 0.0047,
+      "piExperienceTrials": 26,
+      "indicationRxVolume": 4711,
+      "competingTrials": 31,
+      "specialties": [
+        "Psychiatry"
+      ],
+      "demographics": {
+        "blackPct": 18.6,
+        "hispanicPct": 13.7,
+        "asianPct": 3.8,
+        "whitePct": 63.9,
+        "femalePct": 66.5,
+        "ruralPct": 0.0
+      },
+      "npi": null,
+      "address": null,
+      "city": "Chicago",
+      "status": "Recruiting",
+      "primaryContact": "Roueen Rafeyan, MD",
+      "phone": "224-534-7332",
+      "email": "studies@pillarhc.com",
+      "eligiblePatients": 0,
+      "score": 0.0,
+      "diversityFit": 0.0
+    },
+    {
+      "id": "site_018",
+      "name": "NSRT",
+      "lat": 42.3314,
+      "lng": -83.0457,
+      "region": "Midwest",
+      "state": "MI",
+      "baseShare": 0.00724,
+      "piExperienceTrials": 53,
+      "indicationRxVolume": 7551,
+      "competingTrials": 70,
+      "specialties": [
+        "Psychiatry"
+      ],
+      "demographics": {
+        "blackPct": 14.9,
+        "hispanicPct": 6.4,
+        "asianPct": 2.2,
+        "whitePct": 76.4,
+        "femalePct": 66.5,
+        "ruralPct": 0.0
+      },
+      "npi": null,
+      "address": null,
+      "city": "Detroit",
+      "status": "Recruiting",
+      "primaryContact": "Tricia Harrison",
+      "phone": "248-575-1268",
+      "email": "tricia@qcrnetwork.com",
+      "eligiblePatients": 0,
+      "score": 0.0,
+      "diversityFit": 0.0
+    },
+    {
+      "id": "site_019",
+      "name": "Arch Clinical Trials",
+      "lat": 38.6273,
+      "lng": -90.1979,
+      "region": "Midwest",
+      "state": "MO",
+      "baseShare": 0.00272,
+      "piExperienceTrials": 12,
+      "indicationRxVolume": 3279,
+      "competingTrials": 13,
+      "specialties": [
+        "Psychiatry"
+      ],
+      "demographics": {
+        "blackPct": 14.2,
+        "hispanicPct": 4.0,
+        "asianPct": 1.2,
+        "whitePct": 80.6,
+        "femalePct": 66.5,
+        "ruralPct": 0.0
+      },
+      "npi": null,
+      "address": null,
+      "city": "St Louis",
+      "status": "Recruiting",
+      "primaryContact": "Israa Diab",
+      "phone": "314-266-1243",
+      "email": "idiab@archclinicaltrials.com",
+      "eligiblePatients": 0,
+      "score": 0.0,
+      "diversityFit": 0.0
+    },
+    {
+      "id": "site_020",
+      "name": "Redbird Research",
+      "lat": 36.175,
+      "lng": -115.1372,
+      "region": "West",
+      "state": "NV",
+      "baseShare": 0.00177,
+      "piExperienceTrials": 8,
+      "indicationRxVolume": 3300,
+      "competingTrials": 11,
+      "specialties": [
+        "Psychiatry"
+      ],
+      "demographics": {
+        "blackPct": 18.1,
+        "hispanicPct": 22.3,
+        "asianPct": 4.2,
+        "whitePct": 55.4,
+        "femalePct": 66.5,
+        "ruralPct": 0.0
+      },
+      "npi": null,
+      "address": null,
+      "city": "Las Vegas",
+      "status": "Recruiting",
+      "primaryContact": "Haley Lefever",
+      "phone": "702-577-2000",
+      "email": "info@redbird-research.com",
+      "eligiblePatients": 0,
+      "score": 0.0,
+      "diversityFit": 0.0
+    },
+    {
+      "id": "site_021",
+      "name": "Manhattan Behavioral Medicine",
+      "lat": 40.7143,
+      "lng": -74.006,
+      "region": "Northeast",
+      "state": "NY",
+      "baseShare": 0.00655,
+      "piExperienceTrials": 57,
+      "indicationRxVolume": 5577,
+      "competingTrials": 53,
+      "specialties": [
+        "Psychiatry"
+      ],
+      "demographics": {
+        "blackPct": 17.7,
+        "hispanicPct": 20.0,
+        "asianPct": 4.0,
+        "whitePct": 58.3,
+        "femalePct": 66.5,
+        "ruralPct": 0.0
+      },
+      "npi": null,
+      "address": null,
+      "city": "New York",
+      "status": "Recruiting",
+      "primaryContact": "Judith Joseph, MD",
+      "phone": "646-678-4073",
+      "email": "joseph@nymbm.com",
+      "eligiblePatients": 0,
+      "score": 0.0,
+      "diversityFit": 0.0
+    },
+    {
+      "id": "site_022",
+      "name": "Neuro-Behavioral Clinical Research",
+      "lat": 40.7989,
+      "lng": -81.3785,
+      "region": "Midwest",
+      "state": "OH",
+      "baseShare": 0.00763,
+      "piExperienceTrials": 59,
+      "indicationRxVolume": 8917,
+      "competingTrials": 64,
+      "specialties": [
+        "Psychiatry"
+      ],
+      "demographics": {
+        "blackPct": 16.1,
+        "hispanicPct": 7.0,
+        "asianPct": 1.0,
+        "whitePct": 76.0,
+        "femalePct": 66.5,
+        "ruralPct": 0.0
+      },
+      "npi": null,
+      "address": null,
+      "city": "Canton",
+      "status": "Recruiting",
+      "primaryContact": "Crystal Blackford",
+      "phone": "330-493-1118",
+      "email": "cblackford@nb-cr.com",
+      "eligiblePatients": 0,
+      "score": 0.0,
+      "diversityFit": 0.0
+    },
+    {
+      "id": "site_023",
+      "name": "Adams Clinical",
+      "lat": 39.9524,
+      "lng": -75.1636,
+      "region": "Northeast",
+      "state": "PA",
+      "baseShare": 0.00629,
+      "piExperienceTrials": 34,
+      "indicationRxVolume": 6180,
+      "competingTrials": 40,
+      "specialties": [
+        "Psychiatry"
+      ],
+      "demographics": {
+        "blackPct": 12.0,
+        "hispanicPct": 10.0,
+        "asianPct": 1.4,
+        "whitePct": 76.6,
+        "femalePct": 66.5,
+        "ruralPct": 0.0
+      },
+      "npi": null,
+      "address": null,
+      "city": "Philadelphia",
+      "status": "Recruiting",
+      "primaryContact": "Isabel Bear",
+      "phone": "267-207-2511",
+      "email": "ibear@adamsclinical.com",
+      "eligiblePatients": 0,
+      "score": 0.0,
+      "diversityFit": 0.0
+    },
+    {
+      "id": "site_024",
+      "name": "Adams Clinical",
+      "lat": 32.5899,
+      "lng": -96.8569,
+      "region": "Southwest",
+      "state": "TX",
+      "baseShare": 0.00582,
+      "piExperienceTrials": 92,
+      "indicationRxVolume": 18444,
+      "competingTrials": 99,
+      "specialties": [
+        "Psychiatry"
+      ],
+      "demographics": {
+        "blackPct": 17.9,
+        "hispanicPct": 27.9,
+        "asianPct": 2.4,
+        "whitePct": 51.7,
+        "femalePct": 66.5,
+        "ruralPct": 0.0
+      },
+      "npi": null,
+      "address": null,
+      "city": "DeSoto",
+      "status": "Recruiting",
+      "primaryContact": "Jaya Koonjbearry",
+      "phone": "972-283-6286",
+      "email": "info@adamsclinical.com",
+      "eligiblePatients": 0,
+      "score": 0.0,
+      "diversityFit": 0.0
+    },
+    {
+      "id": "site_025",
+      "name": "Pillar Clinical Research",
+      "lat": 32.9482,
+      "lng": -96.7297,
+      "region": "Southwest",
+      "state": "TX",
+      "baseShare": 0.00582,
+      "piExperienceTrials": 92,
+      "indicationRxVolume": 18444,
+      "competingTrials": 99,
+      "specialties": [
+        "Psychiatry"
+      ],
+      "demographics": {
+        "blackPct": 17.9,
+        "hispanicPct": 27.9,
+        "asianPct": 2.4,
+        "whitePct": 51.7,
+        "femalePct": 66.5,
+        "ruralPct": 0.0
+      },
+      "npi": null,
+      "address": null,
+      "city": "Richardson",
+      "status": "Recruiting",
+      "primaryContact": "Scott Barley, MD",
+      "phone": "214-396-4844",
+      "email": "studies@pillarhc.com",
+      "eligiblePatients": 0,
+      "score": 0.0,
+      "diversityFit": 0.0
+    },
+    {
+      "id": "site_026",
+      "name": "Northwest Clinical Research Center",
+      "lat": 47.6104,
+      "lng": -122.2007,
+      "region": "West",
+      "state": "WA",
+      "baseShare": 0.00337,
+      "piExperienceTrials": 18,
+      "indicationRxVolume": 2128,
+      "competingTrials": 29,
+      "specialties": [
+        "Psychiatry"
+      ],
+      "demographics": {
+        "blackPct": 6.9,
+        "hispanicPct": 14.3,
+        "asianPct": 5.3,
+        "whitePct": 73.6,
+        "femalePct": 66.5,
+        "ruralPct": 0.0
+      },
+      "npi": null,
+      "address": null,
+      "city": "Bellevue",
+      "status": "Recruiting",
+      "primaryContact": "Kimberlee Wheeler",
+      "phone": "425-453-0404",
+      "email": "kwheeler@nwcrc.net",
+      "eligiblePatients": 0,
+      "score": 0.0,
+      "diversityFit": 0.0
+    }
+  ],
+  "kols": [
+    {
+      "id": "kol_001",
+      "name": "Dr. Matthew Berger",
+      "region": "Northeast",
+      "specialty": "Psychiatry",
+      "segment": "rising_star",
+      "signals": {
+        "patientVolume": 1.0,
+        "referralCentrality": 0.3992,
+        "referralReach": 0.4861,
+        "trialLeadership": 1.0,
+        "trialRecency": 0.1538,
+        "specialtyFit": 1.0
+      },
+      "linkedSiteIds": [],
+      "score": 0.0,
+      "npi": 1295718237,
+      "trialCount": 1,
+      "competingTrials": 43
+    },
+    {
+      "id": "kol_002",
+      "name": "Dr. Muhammad Alam",
+      "region": "Southeast",
+      "specialty": "Addiction Psychiatry",
+      "segment": "dol",
+      "signals": {
+        "patientVolume": 0.9804,
+        "referralCentrality": 0.0974,
+        "referralReach": 0.2178,
+        "trialLeadership": 0.0,
+        "trialRecency": 0.0,
+        "specialtyFit": 1.0
+      },
+      "linkedSiteIds": [],
+      "score": 0.0,
+      "npi": 1750558979,
+      "trialCount": 0,
+      "competingTrials": 27
+    },
+    {
+      "id": "kol_003",
+      "name": "Dr. Samwel Rorya",
+      "region": "National",
+      "specialty": "Psychiatric/Mental Health",
+      "segment": "dol",
+      "signals": {
+        "patientVolume": 0.8883,
+        "referralCentrality": 0.0268,
+        "referralReach": 0.0214,
+        "trialLeadership": 0.0,
+        "trialRecency": 0.0,
+        "specialtyFit": 1.0
+      },
+      "linkedSiteIds": [],
+      "score": 0.0,
+      "npi": 1811651136,
+      "trialCount": 0,
+      "competingTrials": 3
+    },
+    {
+      "id": "kol_004",
+      "name": "Dr. Shakeel Raza",
+      "region": "Southwest",
+      "specialty": "Child And Adolescent Psychiatry",
+      "segment": "dol",
+      "signals": {
+        "patientVolume": 0.8352,
+        "referralCentrality": 0.1592,
+        "referralReach": 0.313,
+        "trialLeadership": 0.0,
+        "trialRecency": 0.0,
+        "specialtyFit": 1.0
+      },
+      "linkedSiteIds": [],
+      "score": 0.0,
+      "npi": 1811169501,
+      "trialCount": 0,
+      "competingTrials": 110
+    },
+    {
+      "id": "kol_005",
+      "name": "Dr. Paul Young",
+      "region": "Southwest",
+      "specialty": "Psychiatry",
+      "segment": "dol",
+      "signals": {
+        "patientVolume": 0.7933,
+        "referralCentrality": 0.0,
+        "referralReach": 0.0102,
+        "trialLeadership": 0.0,
+        "trialRecency": 0.0,
+        "specialtyFit": 1.0
+      },
+      "linkedSiteIds": [],
+      "score": 0.0,
+      "npi": 1750318598,
+      "trialCount": 0,
+      "competingTrials": 110
+    },
+    {
+      "id": "kol_006",
+      "name": "Dr. Ramakrishna Veluri",
+      "region": "Southwest",
+      "specialty": "Psychiatry",
+      "segment": "dol",
+      "signals": {
+        "patientVolume": 0.757,
+        "referralCentrality": 0.0298,
+        "referralReach": 0.1244,
+        "trialLeadership": 0.0,
+        "trialRecency": 0.0,
+        "specialtyFit": 1.0
+      },
+      "linkedSiteIds": [],
+      "score": 0.0,
+      "npi": 1033525050,
+      "trialCount": 0,
+      "competingTrials": 110
+    },
+    {
+      "id": "kol_007",
+      "name": "Dr. Scott Mayers",
+      "region": "Southeast",
+      "specialty": "Psychiatry",
+      "segment": "dol",
+      "signals": {
+        "patientVolume": 0.7235,
+        "referralCentrality": 0.0414,
+        "referralReach": 0.1497,
+        "trialLeadership": 0.0,
+        "trialRecency": 0.0,
+        "specialtyFit": 1.0
+      },
+      "linkedSiteIds": [],
+      "score": 0.0,
+      "npi": 1356464283,
+      "trialCount": 0,
+      "competingTrials": 25
+    },
+    {
+      "id": "kol_008",
+      "name": "Dr. Goshawn Chawla",
+      "region": "Southwest",
+      "specialty": "Child And Adolescent Psychiatry",
+      "segment": "dol",
+      "signals": {
+        "patientVolume": 0.7067,
+        "referralCentrality": 0.0781,
+        "referralReach": 0.0959,
+        "trialLeadership": 0.0,
+        "trialRecency": 0.0,
+        "specialtyFit": 1.0
+      },
+      "linkedSiteIds": [],
+      "score": 0.0,
+      "npi": 1417277419,
+      "trialCount": 0,
+      "competingTrials": 110
+    },
+    {
+      "id": "kol_009",
+      "name": "Dr. Oliver Gregory",
+      "region": "Southeast",
+      "specialty": "Child And Adolescent Psychiatry",
+      "segment": "dol",
+      "signals": {
+        "patientVolume": 0.6704,
+        "referralCentrality": 0.0649,
+        "referralReach": 0.1098,
+        "trialLeadership": 0.0,
+        "trialRecency": 0.0,
+        "specialtyFit": 1.0
+      },
+      "linkedSiteIds": [],
+      "score": 0.0,
+      "npi": 1588772545,
+      "trialCount": 0,
+      "competingTrials": 7
+    },
+    {
+      "id": "kol_010",
+      "name": "Dr. James Butler",
+      "region": "Southwest",
+      "specialty": "Clinical Genetics (M.D.)",
+      "segment": "dol",
+      "signals": {
+        "patientVolume": 0.6648,
+        "referralCentrality": 0.0684,
+        "referralReach": 0.1554,
+        "trialLeadership": 0.0,
+        "trialRecency": 0.0,
+        "specialtyFit": 0.4
+      },
+      "linkedSiteIds": [],
+      "score": 0.0,
+      "npi": 1104118918,
+      "trialCount": 0,
+      "competingTrials": 110
+    },
+    {
+      "id": "kol_011",
+      "name": "Dr. Felix Geller",
+      "region": "Northeast",
+      "specialty": "Psychiatry",
+      "segment": "dol",
+      "signals": {
+        "patientVolume": 0.648,
+        "referralCentrality": 0.2817,
+        "referralReach": 0.2721,
+        "trialLeadership": 0.0,
+        "trialRecency": 0.0,
+        "specialtyFit": 1.0
+      },
+      "linkedSiteIds": [],
+      "score": 0.0,
+      "npi": 1902073216,
+      "trialCount": 0,
+      "competingTrials": 21
+    },
+    {
+      "id": "kol_012",
+      "name": "Dr. Lindsey Serkes",
+      "region": "Southeast",
+      "specialty": "Anatomic Pathology And Clinical Pathology",
+      "segment": "dol",
+      "signals": {
+        "patientVolume": 0.6425,
+        "referralCentrality": 0.1429,
+        "referralReach": 0.1893,
+        "trialLeadership": 0.0,
+        "trialRecency": 0.0,
+        "specialtyFit": 0.4
+      },
+      "linkedSiteIds": [],
+      "score": 0.0,
+      "npi": 1346516101,
+      "trialCount": 0,
+      "competingTrials": 34
+    },
+    {
+      "id": "kol_013",
+      "name": "Dr. Damaso Oliva",
+      "region": "Southwest",
+      "specialty": "Psychiatry",
+      "segment": "dol",
+      "signals": {
+        "patientVolume": 0.6425,
+        "referralCentrality": 0.0017,
+        "referralReach": 0.0191,
+        "trialLeadership": 0.0,
+        "trialRecency": 0.0,
+        "specialtyFit": 1.0
+      },
+      "linkedSiteIds": [],
+      "score": 0.0,
+      "npi": 1659304350,
+      "trialCount": 0,
+      "competingTrials": 110
+    },
+    {
+      "id": "kol_014",
+      "name": "Dr. Blake Henchcliffe",
+      "region": "Southeast",
+      "specialty": "Psychiatry",
+      "segment": "dol",
+      "signals": {
+        "patientVolume": 0.6257,
+        "referralCentrality": 0.1032,
+        "referralReach": 0.2286,
+        "trialLeadership": 0.0,
+        "trialRecency": 0.0,
+        "specialtyFit": 1.0
+      },
+      "linkedSiteIds": [],
+      "score": 0.0,
+      "npi": 1982191409,
+      "trialCount": 0,
+      "competingTrials": 25
+    },
+    {
+      "id": "kol_015",
+      "name": "Dr. Anita Collins -Mccullum",
+      "region": "Southeast",
+      "specialty": "Psychiatric/Mental Health",
+      "segment": "dol",
+      "signals": {
+        "patientVolume": 0.5894,
+        "referralCentrality": 0.3606,
+        "referralReach": 0.4579,
+        "trialLeadership": 0.0,
+        "trialRecency": 0.0,
+        "specialtyFit": 1.0
+      },
+      "linkedSiteIds": [],
+      "score": 0.0,
+      "npi": 1902248891,
+      "trialCount": 0,
+      "competingTrials": 18
+    },
+    {
+      "id": "kol_016",
+      "name": "Dr. Rhonda Robertson",
+      "region": "Southeast",
+      "specialty": "Nurse Practitioner",
+      "segment": "dol",
+      "signals": {
+        "patientVolume": 0.5615,
+        "referralCentrality": 0.0298,
+        "referralReach": 0.076,
+        "trialLeadership": 0.0,
+        "trialRecency": 0.0,
+        "specialtyFit": 0.4
+      },
+      "linkedSiteIds": [],
+      "score": 0.0,
+      "npi": 1568464733,
+      "trialCount": 0,
+      "competingTrials": 25
+    },
+    {
+      "id": "kol_017",
+      "name": "Dr. David Chess",
+      "region": "National",
+      "specialty": "Geriatric Medicine",
+      "segment": "dol",
+      "signals": {
+        "patientVolume": 0.5587,
+        "referralCentrality": 1.0,
+        "referralReach": 1.0,
+        "trialLeadership": 0.0,
+        "trialRecency": 0.0,
+        "specialtyFit": 0.4
+      },
+      "linkedSiteIds": [],
+      "score": 0.0,
+      "npi": 1376521773,
+      "trialCount": 0,
+      "competingTrials": 3
+    },
+    {
+      "id": "kol_018",
+      "name": "Dr. Adebayo Arowolo",
+      "region": "Northeast",
+      "specialty": "Psychiatric/Mental Health",
+      "segment": "dol",
+      "signals": {
+        "patientVolume": 0.5419,
+        "referralCentrality": 0.0218,
+        "referralReach": 0.0472,
+        "trialLeadership": 0.0,
+        "trialRecency": 0.0,
+        "specialtyFit": 1.0
+      },
+      "linkedSiteIds": [],
+      "score": 0.0,
+      "npi": 1508405382,
+      "trialCount": 0,
+      "competingTrials": 21
+    },
+    {
+      "id": "kol_019",
+      "name": "Dr. Alejandro Alva",
+      "region": "West",
+      "specialty": "Psychiatry",
+      "segment": "rising_star",
+      "signals": {
+        "patientVolume": 0.5419,
+        "referralCentrality": 0.2924,
+        "referralReach": 0.6216,
+        "trialLeadership": 1.0,
+        "trialRecency": 0.0,
+        "specialtyFit": 1.0
+      },
+      "linkedSiteIds": [],
+      "score": 0.0,
+      "npi": 1801816764,
+      "trialCount": 1,
+      "competingTrials": 147
+    },
+    {
+      "id": "kol_020",
+      "name": "Dr. Syed Zaidi",
+      "region": "Southwest",
+      "specialty": "Psychiatry",
+      "segment": "dol",
+      "signals": {
+        "patientVolume": 0.5335,
+        "referralCentrality": 0.1271,
+        "referralReach": 0.147,
+        "trialLeadership": 0.0,
+        "trialRecency": 0.0,
+        "specialtyFit": 1.0
+      },
+      "linkedSiteIds": [],
+      "score": 0.0,
+      "npi": 1932549250,
+      "trialCount": 0,
+      "competingTrials": 110
+    },
+    {
+      "id": "kol_021",
+      "name": "Dr. Haolat Babalakin",
+      "region": "Southeast",
+      "specialty": "Child And Adolescent Psychiatry",
+      "segment": "dol",
+      "signals": {
+        "patientVolume": 0.5251,
+        "referralCentrality": 0.0333,
+        "referralReach": 0.1297,
+        "trialLeadership": 0.0,
+        "trialRecency": 0.0,
+        "specialtyFit": 1.0
+      },
+      "linkedSiteIds": [],
+      "score": 0.0,
+      "npi": 1245337708,
+      "trialCount": 0,
+      "competingTrials": 27
+    },
+    {
+      "id": "kol_022",
+      "name": "Dr. Syed Sattar",
+      "region": "Midwest",
+      "specialty": "Addiction Psychiatry",
+      "segment": "dol",
+      "signals": {
+        "patientVolume": 0.5223,
+        "referralCentrality": 0.5394,
+        "referralReach": 0.4688,
+        "trialLeadership": 0.0,
+        "trialRecency": 0.0,
+        "specialtyFit": 1.0
+      },
+      "linkedSiteIds": [],
+      "score": 0.0,
+      "npi": 1942314604,
+      "trialCount": 0,
+      "competingTrials": 9
+    },
+    {
+      "id": "kol_023",
+      "name": "Dr. Abraham Kimeli",
+      "region": "Midwest",
+      "specialty": "Psychiatric/Mental Health",
+      "segment": "dol",
+      "signals": {
+        "patientVolume": 0.514,
+        "referralCentrality": 0.0046,
+        "referralReach": 0.0645,
+        "trialLeadership": 0.0,
+        "trialRecency": 0.0,
+        "specialtyFit": 1.0
+      },
+      "linkedSiteIds": [],
+      "score": 0.0,
+      "npi": 1215404413,
+      "trialCount": 0,
+      "competingTrials": 85
+    },
+    {
+      "id": "kol_024",
+      "name": "Dr. Durim Bozhdaraj",
+      "region": "Southeast",
+      "specialty": "Psychiatry",
+      "segment": "dol",
+      "signals": {
+        "patientVolume": 0.5,
+        "referralCentrality": 0.0032,
+        "referralReach": 0.0632,
+        "trialLeadership": 0.0,
+        "trialRecency": 0.0,
+        "specialtyFit": 1.0
+      },
+      "linkedSiteIds": [],
+      "score": 0.0,
+      "npi": 1750791281,
+      "trialCount": 0,
+      "competingTrials": 85
+    },
+    {
+      "id": "kol_025",
+      "name": "Dr. Hetal Patel",
+      "region": "Midwest",
+      "specialty": "Psychiatry",
+      "segment": "dol",
+      "signals": {
+        "patientVolume": 0.4944,
+        "referralCentrality": 0.1465,
+        "referralReach": 0.0433,
+        "trialLeadership": 0.0,
+        "trialRecency": 0.0,
+        "specialtyFit": 1.0
+      },
+      "linkedSiteIds": [],
+      "score": 0.0,
+      "npi": 1508068685,
+      "trialCount": 0,
+      "competingTrials": 85
+    },
+    {
+      "id": "kol_026",
+      "name": "Dr. Priyadarshan Bajpayi",
+      "region": "Northeast",
+      "specialty": "Child And Adolescent Psychiatry",
+      "segment": "dol",
+      "signals": {
+        "patientVolume": 0.4888,
+        "referralCentrality": 0.2228,
+        "referralReach": 0.1852,
+        "trialLeadership": 0.0,
+        "trialRecency": 0.0,
+        "specialtyFit": 1.0
+      },
+      "linkedSiteIds": [],
+      "score": 0.0,
+      "npi": 1699087148,
+      "trialCount": 0,
+      "competingTrials": 71
+    },
+    {
+      "id": "kol_027",
+      "name": "Dr. Tierra Page",
+      "region": "National",
+      "specialty": "Psychiatric/Mental Health",
+      "segment": "dol",
+      "signals": {
+        "patientVolume": 0.4832,
+        "referralCentrality": 0.0489,
+        "referralReach": 0.0847,
+        "trialLeadership": 0.0,
+        "trialRecency": 0.0,
+        "specialtyFit": 1.0
+      },
+      "linkedSiteIds": [],
+      "score": 0.0,
+      "npi": 1487015475,
+      "trialCount": 0,
+      "competingTrials": 3
+    },
+    {
+      "id": "kol_028",
+      "name": "Dr. Ajith Potluri",
+      "region": "Southeast",
+      "specialty": "Geriatric Psychiatry",
+      "segment": "dol",
+      "signals": {
+        "patientVolume": 0.4469,
+        "referralCentrality": 0.0491,
+        "referralReach": 0.0831,
+        "trialLeadership": 0.0,
+        "trialRecency": 0.0,
+        "specialtyFit": 1.0
+      },
+      "linkedSiteIds": [],
+      "score": 0.0,
+      "npi": 1194791392,
+      "trialCount": 0,
+      "competingTrials": 85
+    },
+    {
+      "id": "kol_029",
+      "name": "Dr. Olaniyi Osuntokun",
+      "region": "National",
+      "specialty": "Psychiatry",
+      "segment": "dol",
+      "signals": {
+        "patientVolume": 0.4469,
+        "referralCentrality": 0.3164,
+        "referralReach": 0.3508,
+        "trialLeadership": 0.0,
+        "trialRecency": 0.0,
+        "specialtyFit": 1.0
+      },
+      "linkedSiteIds": [],
+      "score": 0.0,
+      "npi": 1548375058,
+      "trialCount": 0,
+      "competingTrials": 3
+    },
+    {
+      "id": "kol_030",
+      "name": "Dr. Babur Bhatti",
+      "region": "National",
+      "specialty": "Geriatric Psychiatry",
+      "segment": "dol",
+      "signals": {
+        "patientVolume": 0.4441,
+        "referralCentrality": 0.0712,
+        "referralReach": 0.0763,
+        "trialLeadership": 0.0,
+        "trialRecency": 0.0,
+        "specialtyFit": 1.0
+      },
+      "linkedSiteIds": [],
+      "score": 0.0,
+      "npi": 1245525781,
+      "trialCount": 0,
+      "competingTrials": 3
+    },
+    {
+      "id": "kol_031",
+      "name": "Dr. Pedram Amani",
+      "region": "Southwest",
+      "specialty": "Psychiatry",
+      "segment": "dol",
+      "signals": {
+        "patientVolume": 0.4413,
+        "referralCentrality": 0.0494,
+        "referralReach": 0.1442,
+        "trialLeadership": 0.0,
+        "trialRecency": 0.0,
+        "specialtyFit": 1.0
+      },
+      "linkedSiteIds": [],
+      "score": 0.0,
+      "npi": 1174814594,
+      "trialCount": 0,
+      "competingTrials": 23
+    },
+    {
+      "id": "kol_032",
+      "name": "Dr. Ajinder Dhatt",
+      "region": "Southwest",
+      "specialty": "Psychiatry",
+      "segment": "dol",
+      "signals": {
+        "patientVolume": 0.4413,
+        "referralCentrality": 0.0481,
+        "referralReach": 0.1668,
+        "trialLeadership": 0.0,
+        "trialRecency": 0.0,
+        "specialtyFit": 1.0
+      },
+      "linkedSiteIds": [],
+      "score": 0.0,
+      "npi": 1851597793,
+      "trialCount": 0,
+      "competingTrials": 110
+    },
+    {
+      "id": "kol_033",
+      "name": "Dr. Alejandra Kalik",
+      "region": "Southeast",
+      "specialty": "Anatomic Pathology And Clinical Pathology",
+      "segment": "dol",
+      "signals": {
+        "patientVolume": 0.4413,
+        "referralCentrality": 0.0037,
+        "referralReach": 0.0265,
+        "trialLeadership": 0.0,
+        "trialRecency": 0.0,
+        "specialtyFit": 0.4
+      },
+      "linkedSiteIds": [],
+      "score": 0.0,
+      "npi": 1912970526,
+      "trialCount": 0,
+      "competingTrials": 85
+    },
+    {
+      "id": "kol_034",
+      "name": "Dr. Sarfraz Khan",
+      "region": "Midwest",
+      "specialty": "Psychiatry",
+      "segment": "dol",
+      "signals": {
+        "patientVolume": 0.4274,
+        "referralCentrality": 0.6754,
+        "referralReach": 0.8323,
+        "trialLeadership": 0.0,
+        "trialRecency": 0.0,
+        "specialtyFit": 1.0
+      },
+      "linkedSiteIds": [],
+      "score": 0.0,
+      "npi": 1316982309,
+      "trialCount": 0,
+      "competingTrials": 13
+    },
+    {
+      "id": "kol_035",
+      "name": "Dr. Satish Mallik",
+      "region": "Northeast",
+      "specialty": "Psychiatry",
+      "segment": "dol",
+      "signals": {
+        "patientVolume": 0.4274,
+        "referralCentrality": 0.2077,
+        "referralReach": 0.2853,
+        "trialLeadership": 0.0,
+        "trialRecency": 0.0,
+        "specialtyFit": 1.0
+      },
+      "linkedSiteIds": [],
+      "score": 0.0,
+      "npi": 1568421451,
+      "trialCount": 0,
+      "competingTrials": 43
+    },
+    {
+      "id": "kol_036",
+      "name": "Dr. Beverley Howard",
+      "region": "Southeast",
+      "specialty": "Psychiatric/Mental Health",
+      "segment": "dol",
+      "signals": {
+        "patientVolume": 0.4246,
+        "referralCentrality": 0.098,
+        "referralReach": 0.182,
+        "trialLeadership": 0.0,
+        "trialRecency": 0.0,
+        "specialtyFit": 1.0
+      },
+      "linkedSiteIds": [],
+      "score": 0.0,
+      "npi": 1497175921,
+      "trialCount": 0,
+      "competingTrials": 85
+    },
+    {
+      "id": "kol_037",
+      "name": "Dr. Kevin Ferguson",
+      "region": "Southeast",
+      "specialty": "Child And Adolescent Psychiatry",
+      "segment": "dol",
+      "signals": {
+        "patientVolume": 0.4218,
+        "referralCentrality": 0.0275,
+        "referralReach": 0.0899,
+        "trialLeadership": 0.0,
+        "trialRecency": 0.0,
+        "specialtyFit": 1.0
+      },
+      "linkedSiteIds": [],
+      "score": 0.0,
+      "npi": 1164530036,
+      "trialCount": 0,
+      "competingTrials": 7
+    },
+    {
+      "id": "kol_038",
+      "name": "Dr. Brian Fuller",
+      "region": "Southeast",
+      "specialty": "Addiction Medicine",
+      "segment": "dol",
+      "signals": {
+        "patientVolume": 0.4078,
+        "referralCentrality": 0.0,
+        "referralReach": 0.0446,
+        "trialLeadership": 0.0,
+        "trialRecency": 0.0,
+        "specialtyFit": 0.6
+      },
+      "linkedSiteIds": [],
+      "score": 0.0,
+      "npi": 1033409438,
+      "trialCount": 0,
+      "competingTrials": 7
+    },
+    {
+      "id": "kol_039",
+      "name": "Dr. Satish Narayan",
+      "region": "Southwest",
+      "specialty": "Psychiatry",
+      "segment": "dol",
+      "signals": {
+        "patientVolume": 0.405,
+        "referralCentrality": 0.0311,
+        "referralReach": 0.1971,
+        "trialLeadership": 0.0,
+        "trialRecency": 0.0,
+        "specialtyFit": 1.0
+      },
+      "linkedSiteIds": [],
+      "score": 0.0,
+      "npi": 1194787200,
+      "trialCount": 0,
+      "competingTrials": 110
+    },
+    {
+      "id": "kol_040",
+      "name": "Dr. Andrew Kokesh",
+      "region": "West",
+      "specialty": "Psychiatric/Mental Health",
+      "segment": "dol",
+      "signals": {
+        "patientVolume": 0.3994,
+        "referralCentrality": 0.2088,
+        "referralReach": 0.3617,
+        "trialLeadership": 0.0,
+        "trialRecency": 0.0,
+        "specialtyFit": 1.0
+      },
+      "linkedSiteIds": [],
+      "score": 0.0,
+      "npi": 1497107122,
+      "trialCount": 0,
+      "competingTrials": 30
+    }
+  ],
+  "kolEdges": [
+    {
+      "source": "kol_035",
+      "target": "kol_001",
+      "kind": "referral",
+      "weight": 0.185
+    },
+    {
+      "source": "kol_001",
+      "target": "kol_035",
+      "kind": "referral",
+      "weight": 0.074
+    },
+    {
+      "source": "kol_007",
+      "target": "kol_014",
+      "kind": "referral",
+      "weight": 0.01
+    },
+    {
+      "source": "kol_032",
+      "target": "kol_004",
+      "kind": "referral",
+      "weight": 0.01
+    },
+    {
+      "source": "kol_020",
+      "target": "kol_032",
+      "kind": "referral",
+      "weight": 0.005
+    }
+  ],
+  "indications": [
+    {
+      "id": "bipolar1_depression",
+      "label": "Bipolar I depression",
+      "diagnosed": 437375,
+      "treated": 425211,
+      "trialEligible": 52485,
+      "competingTrialDensity": 0.12,
+      "feasibilityScore": 0.94,
+      "region": "National"
+    },
+    {
+      "id": "adj_breast_neoplasms",
+      "label": "Breast Neoplasms",
+      "diagnosed": 368916,
+      "treated": 219638,
+      "trialEligible": 28144,
+      "competingTrialDensity": 0.3,
+      "feasibilityScore": 0.85,
+      "region": "National"
+    },
+    {
+      "id": "adj_opioid-related_disorders",
+      "label": "Opioid-Related Disorders",
+      "diagnosed": 343561,
+      "treated": 203791,
+      "trialEligible": 25608,
+      "competingTrialDensity": 0.23,
+      "feasibilityScore": 0.89,
+      "region": "National"
+    },
+    {
+      "id": "adj_neoplasms",
+      "label": "Neoplasms",
+      "diagnosed": 343561,
+      "treated": 203791,
+      "trialEligible": 25608,
+      "competingTrialDensity": 0.23,
+      "feasibilityScore": 0.89,
+      "region": "National"
+    },
+    {
+      "id": "adj_alzheimer_disease",
+      "label": "Alzheimer Disease",
+      "diagnosed": 328348,
+      "treated": 194283,
+      "trialEligible": 24087,
+      "competingTrialDensity": 0.19,
+      "feasibilityScore": 0.91,
+      "region": "National"
+    }
+  ],
+  "regions": [
+    "Northeast",
+    "Southeast",
+    "Midwest",
+    "Southwest",
+    "West"
+  ],
+  "benchmarks": {
+    "avgScreenFailRate": 0.28,
+    "avgPerSiteRatePerMonth": 1.4,
+    "avgActivationMonths": 3
+  },
+  "dataSource": "db",
+  "trials": [
+    {
+      "id": "NCT06292013",
+      "title": "A Phase 3, Randomized, Double-Blind, Placebo-Controlled Study to Investigate the Effect of Lepodisiran on the Reduction of Major Adverse Cardiovascular Events in Adults With Elevated Lipoprotein(a) Who Have Established Atherosclerotic Cardiovascular Disease or Are at Risk for a First Cardiovascular ",
+      "phase": "Phase3",
+      "sponsor": "Eli Lilly And Company",
+      "sponsorClass": "Industry",
+      "condition": "Cardiovascular Diseases",
+      "status": "Open",
+      "startDate": "2024-03-05",
+      "endDate": "2029-03-01",
+      "investigators": 26,
+      "states": [
+        "AZ",
+        "CA",
+        "CT",
+        "FL",
+        "GA",
+        "IN",
+        "MI",
+        "NC",
+        "NM",
+        "NV",
+        "PA",
+        "SC",
+        "TX",
+        "VA",
+        "WV"
+      ]
+    },
+    {
+      "id": "NCT06267560",
+      "title": "A Randomized Double-blind, Placebo-controlled, Multicenter Study to Evaluate the Efficacy, Safety and Tolerability of Pelacarsen (TQJ230) in US Black/African American & Hispanic Patient Populations With Elevated Lp(a) and Established Atherosclerotic Cardiovascular Disease",
+      "phase": "Phase3",
+      "sponsor": "Novartis Pharmaceuticals",
+      "sponsorClass": "Industry",
+      "condition": "Cardiovascular Diseases",
+      "status": "Open",
+      "startDate": "2024-04-24",
+      "endDate": "2027-03-11",
+      "investigators": 25,
+      "states": [
+        "AL",
+        "CA",
+        "FL",
+        "LA",
+        "MI",
+        "NC",
+        "NV",
+        "PA",
+        "TX",
+        "VA"
+      ]
+    },
+    {
+      "id": "NCT06383390",
+      "title": "A Phase 3, Randomized, Double-Blind, Placebo-Controlled, Event-Driven Study to Investigate the Effect of Retatrutide on the Incidence of Major Adverse Cardiovascular Events and Major Adverse Kidney Events in Participants With Body Mass Index ≥27 kg/m2 and Atherosclerotic Cardiovascular Disease and/o",
+      "phase": "Phase3",
+      "sponsor": "Eli Lilly And Company",
+      "sponsorClass": "Industry",
+      "condition": "Kidney Diseases",
+      "status": "Open",
+      "startDate": "2024-04-30",
+      "endDate": "2029-02-01",
+      "investigators": 23,
+      "states": [
+        "AZ",
+        "CA",
+        "FL",
+        "GA",
+        "IL",
+        "IN",
+        "MI",
+        "NC",
+        "PA",
+        "SC",
+        "TX",
+        "VA",
+        "WV"
+      ]
+    },
+    {
+      "id": "NCT04940390",
+      "title": "A Randomized, Double-Blind, Parallel Group, Placebo-Controlled, Multicenter Study to Evaluate the Efficacy, Safety, and Tolerability of STS101 (Dihydroergotamine Nasal Powder) in the Acute Treatment of Migraine",
+      "phase": "Phase3",
+      "sponsor": "Satsuma Pharmaceuticals, Inc.",
+      "sponsorClass": "Industry",
+      "condition": "Migraine Disorders",
+      "status": "Closed",
+      "startDate": "2021-06-30",
+      "endDate": "2022-10-26",
+      "investigators": 17,
+      "states": [
+        "AZ",
+        "CA",
+        "FL",
+        "IA",
+        "IL",
+        "IN",
+        "MA",
+        "NE",
+        "NY",
+        "TX",
+        "UT"
+      ]
+    },
+    {
+      "id": "NCT05304767",
+      "title": "An Open-label Extension Study to Assess the Long-term Safety and Tolerability of Adjunctive KarXT in Subjects With Inadequately Controlled Symptoms of Schizophrenia",
+      "phase": "Phase3",
+      "sponsor": "Karuna Therapeutics",
+      "sponsorClass": "Industry",
+      "condition": "Schizophrenia",
+      "status": "Open",
+      "startDate": "2022-03-07",
+      "endDate": "2026-03-16",
+      "investigators": 17,
+      "states": [
+        "AR",
+        "AZ",
+        "CA",
+        "FL",
+        "GA",
+        "MA",
+        "MO",
+        "NC",
+        "NV",
+        "NY",
+        "TX"
+      ]
+    },
+    {
+      "id": "NCT06384157",
+      "title": "A Phase II Double Blind, Placebo Controlled, Randomised, Dose-Ranging Study to Assess the Safety and Efficacy of INDV-2000 Over 3 Months in Treatment Seeking Individuals With Opioid Use Disorder",
+      "phase": "Phase2",
+      "sponsor": "Indivior Inc.",
+      "sponsorClass": "Industry",
+      "condition": "Opioid-Related Disorders",
+      "status": "Open",
+      "startDate": "2024-06-10",
+      "endDate": "2025-09-01",
+      "investigators": 17,
+      "states": [
+        "MD",
+        "MI",
+        "MO",
+        "MS",
+        "NC",
+        "NV",
+        "NY",
+        "OH",
+        "OK",
+        "SC",
+        "TX",
+        "UT"
+      ]
+    },
+    {
+      "id": "NCT05624268",
+      "title": "A Phase III, Multicentre, Randomised, Double-blind, Placebo-controlled Study to Investigate the Efficacy, Safety, and Tolerability of COMP360 in Participants With Treatment-resistant Depression",
+      "phase": "Phase3",
+      "sponsor": "Compass Pathways",
+      "sponsorClass": "Industry",
+      "condition": "Depressive Disorder, Treatment-Resistant",
+      "status": "Open",
+      "startDate": "2023-01-19",
+      "endDate": "2026-02-01",
+      "investigators": 16,
+      "states": [
+        "AZ",
+        "CA",
+        "FL",
+        "GA",
+        "MO",
+        "NE",
+        "OK",
+        "PA",
+        "UT"
+      ]
+    },
+    {
+      "id": "NCT05711940",
+      "title": "A Phase III, Multicentre, Randomised, Double-blind, Controlled Study to Investigate the Efficacy, Safety, and Tolerability of Two Administrations of COMP360 in Participants With Treatment-resistant Depression",
+      "phase": "Phase3",
+      "sponsor": "Compass Pathways",
+      "sponsorClass": "Industry",
+      "condition": "Depressive Disorder, Treatment-Resistant",
+      "status": "Open",
+      "startDate": "2023-02-14",
+      "endDate": "2025-05-01",
+      "investigators": 14,
+      "states": [
+        "CA",
+        "FL",
+        "MI",
+        "NJ",
+        "NY",
+        "OH",
+        "TX",
+        "UT",
+        "WA"
+      ]
+    },
+    {
+      "id": "NCT06347133",
+      "title": "Double-blind, Placebo-controlled, Phase 3 Study to Evaluate the Efficacy and Safety of Plozasiran in Adults With Hypertriglyceridemia",
+      "phase": "Phase3",
+      "sponsor": "Arrowhead Pharmaceuticals",
+      "sponsorClass": "Industry",
+      "condition": "Hypertriglyceridemia",
+      "status": "Open",
+      "startDate": "2024-05-21",
+      "endDate": "2026-10-01",
+      "investigators": 14,
+      "states": [
+        "CA",
+        "LA",
+        "MS",
+        "NC",
+        "NE",
+        "NV",
+        "NY",
+        "OK",
+        "TX"
+      ]
+    },
+    {
+      "id": "NCT06585787",
+      "title": "A Phase 3, Randomized, Double-Blind, Placebo-Controlled, Parallel Group Study to Evaluate the Safety and Efficacy of KarXT for the Treatment of Psychosis Associated With Alzheimer's Disease",
+      "phase": "Phase3",
+      "sponsor": "Karuna Therapeutics",
+      "sponsorClass": "Industry",
+      "condition": "Alzheimer Disease",
+      "status": "Open",
+      "startDate": "2024-09-26",
+      "endDate": "2026-10-19",
+      "investigators": 14,
+      "states": [
+        "AZ",
+        "CA",
+        "FL",
+        "MS",
+        "TX"
+      ]
+    },
+    {
+      "id": "NCT05860959",
+      "title": "A Phase IV Longitudinal Study of SUBLOCADE (SUBUTEX Prolonged Release) Clinical Outcomes in Adults With Opioid Use Disorder (Opioid Dependence)",
+      "phase": "",
+      "sponsor": "Indivior Inc.",
+      "sponsorClass": "Industry",
+      "condition": "Opioid-Related Disorders",
+      "status": "Open",
+      "startDate": "2023-08-31",
+      "endDate": "2027-08-01",
+      "investigators": 13,
+      "states": [
+        "CA",
+        "CT",
+        "FL",
+        "MD",
+        "ME",
+        "MI",
+        "NY",
+        "SC",
+        "UT"
+      ]
+    },
+    {
+      "id": "NCT06433635",
+      "title": "Sequential Multiple Assignment Randomized Trial for Bipolar Depression",
+      "phase": "Phase4",
+      "sponsor": "Massachusetts General Hospital",
+      "sponsorClass": "Other",
+      "condition": "Bipolar Disorder",
+      "status": "Open",
+      "startDate": "2024-09-01",
+      "endDate": "2030-02-28",
+      "investigators": 13,
+      "states": [
+        "MA",
+        "MD",
+        "MI",
+        "NC",
+        "NM",
+        "NY",
+        "OH",
+        "PA",
+        "TX"
+      ]
+    },
+    {
+      "id": "NCT05511363",
+      "title": "A Phase 3, Randomized, Double-Blind, Placebo-Controlled Relapse Prevention Study to Evaluate the Safety and Efficacy of KarXT for the Treatment of Psychosis Associated With Alzheimer's Disease",
+      "phase": "Phase3",
+      "sponsor": "Karuna Therapeutics",
+      "sponsorClass": "Industry",
+      "condition": "Psychotic Disorders",
+      "status": "Open",
+      "startDate": "2022-08-23",
+      "endDate": "2026-10-05",
+      "investigators": 11,
+      "states": [
+        "AL",
+        "CA",
+        "FL",
+        "IL",
+        "NY",
+        "TX"
+      ]
+    },
+    {
+      "id": "NCT06653153",
+      "title": "A Study of Remternetug Versus Placebo in Early Alzheimer's Disease Participants at Risk for Cognitive and Functional Decline",
+      "phase": "Phase3",
+      "sponsor": "Eli Lilly And Company",
+      "sponsorClass": "Industry",
+      "condition": "Alzheimer Disease",
+      "status": "Open",
+      "startDate": "2024-10-24",
+      "endDate": "2030-10-01",
+      "investigators": 11,
+      "states": [
+        "AL",
+        "CO",
+        "FL",
+        "LA",
+        "ME",
+        "MI",
+        "MS",
+        "OH",
+        "TX",
+        "WA"
+      ]
+    },
+    {
+      "id": "NCT06268886",
+      "title": "A Randomized, Double-blind, Placebo-controlled, Global, Study to Evaluate the Efficacy, Safety, and Tolerability of BMS-986446, an Anti-MTBR Tau Monoclonal Antibody, in Participants With Early Alzheimer's Disease (TargetTau-1)",
+      "phase": "Phase2",
+      "sponsor": "Bristol-Myers Squibb",
+      "sponsorClass": "Industry",
+      "condition": "Alzheimer Disease",
+      "status": "Open",
+      "startDate": "2024-03-20",
+      "endDate": "2027-09-04",
+      "investigators": 10,
+      "states": [
+        "CA",
+        "FL",
+        "NY"
+      ]
+    },
+    {
+      "id": "NCT04994483",
+      "title": "A Phase 3, Randomized, Double-blind, Placebo-controlled, Parallel-group, 52-week Study Evaluating the Safety and Efficacy of Simufilam 100 Mg Tablets in Subjects with Mild-to-Moderate Alzheimer's Disease",
+      "phase": "Phase3",
+      "sponsor": "Cassava Sciences, Inc.",
+      "sponsorClass": "Industry",
+      "condition": "Alzheimer Disease",
+      "status": "Closed",
+      "startDate": "2021-11-03",
+      "endDate": "2024-10-02",
+      "investigators": 9,
+      "states": [
+        "CA",
+        "FL",
+        "KS",
+        "MA",
+        "NY",
+        "TX"
+      ]
+    },
+    {
+      "id": "NCT05026866",
+      "title": "A Study of Donanemab Versus Placebo in Participants at Risk for Cognitive and Functional Decline of Alzheimer's Disease",
+      "phase": "Phase3",
+      "sponsor": "Eli Lilly And Company",
+      "sponsorClass": "Industry",
+      "condition": "Alzheimer Disease",
+      "status": "Open",
+      "startDate": "2021-08-27",
+      "endDate": "2027-11-01",
+      "investigators": 9,
+      "states": [
+        "AL",
+        "FL",
+        "GA",
+        "LA",
+        "NC",
+        "OK",
+        "TX",
+        "VA"
+      ]
+    },
+    {
+      "id": "NCT05980949",
+      "title": "A Phase 3 Global, Multicenter, Open-Label Extension Study to Assess the Long-Term Safety and Tolerability of KarXT in Subjects With Psychosis Associated With Alzheimer's Disease",
+      "phase": "Phase3",
+      "sponsor": "Karuna Therapeutics",
+      "sponsorClass": "Industry",
+      "condition": "Mental Disorders",
+      "status": "Open",
+      "startDate": "2023-07-11",
+      "endDate": "2027-09-07",
+      "investigators": 9,
+      "states": [
+        "CA",
+        "FL"
+      ]
+    },
+    {
+      "id": "NCT06098079",
+      "title": "A Phase IV Study to Assess the Effect of Naltrexone Hydrochloride Extended Release (ER) and Bupropion Hydrochloride ER Combination (Contrave®/Mysimba®) on the Occurrence of Major Adverse Cardiovascular Events",
+      "phase": "Phase4",
+      "sponsor": "Currax Pharmaceuticals",
+      "sponsorClass": "Industry",
+      "condition": "Unspecified",
+      "status": "Open",
+      "startDate": "2024-01-03",
+      "endDate": "2029-07-01",
+      "investigators": 9,
+      "states": [
+        "AZ",
+        "CA",
+        "FL",
+        "GA",
+        "KS",
+        "MO",
+        "NH",
+        "PA"
+      ]
+    },
+    {
+      "id": "NCT06347003",
+      "title": "Double-blind, Placebo-controlled, Phase 3 Study to Evaluate the Efficacy and Safety of Plozasiran in Adults With Severe Hypertriglyceridemia",
+      "phase": "Phase3",
+      "sponsor": "Arrowhead Pharmaceuticals",
+      "sponsorClass": "Industry",
+      "condition": "Hypertriglyceridemia",
+      "status": "Open",
+      "startDate": "2024-07-22",
+      "endDate": "2026-10-01",
+      "investigators": 9,
+      "states": [
+        "CA",
+        "NE",
+        "NV",
+        "NY",
+        "OK",
+        "TX"
+      ]
+    },
+    {
+      "id": "NCT06112418",
+      "title": "A Randomized Comparison of Cleerly Coronary Artery Disease Stage-Based Care Versus Risk Factor-Based Care for Primary Prevention of Cardiovascular Events",
+      "phase": "Na",
+      "sponsor": "Cleerly, Inc.",
+      "sponsorClass": "Industry",
+      "condition": "Metabolic Syndrome",
+      "status": "Open",
+      "startDate": "2024-03-06",
+      "endDate": "2029-03-05",
+      "investigators": 8,
+      "states": [
+        "CA",
+        "FL",
+        "NE",
+        "TX"
+      ]
+    },
+    {
+      "id": "NCT06297603",
+      "title": "A Phase 3, Randomized, Multicenter, Double-Blind Study to Investigate the Efficacy and Safety of Retatrutide Once Weekly Compared With Placebo in Adult Participants With Type 2 Diabetes, Moderate or Severe Renal Impairment With Inadequate Glycemic Control on Basal Insulin With or Without Metformin a",
+      "phase": "Phase3",
+      "sponsor": "Eli Lilly And Company",
+      "sponsorClass": "Industry",
+      "condition": "Diabetes Mellitus, Type 2",
+      "status": "Open",
+      "startDate": "2024-03-15",
+      "endDate": "2026-10-01",
+      "investigators": 8,
+      "states": [
+        "CA",
+        "GA",
+        "NY",
+        "OH",
+        "OK",
+        "PA",
+        "TX"
+      ]
+    },
+    {
+      "id": "NCT06347016",
+      "title": "Double-blind, Placebo-controlled, Phase 3 Study to Evaluate the Efficacy and Safety of Plozsiran in Adults With Severe Hypertriglyceridemia",
+      "phase": "Phase3",
+      "sponsor": "Arrowhead Pharmaceuticals",
+      "sponsorClass": "Industry",
+      "condition": "Hypertriglyceridemia",
+      "status": "Open",
+      "startDate": "2024-07-23",
+      "endDate": "2026-10-01",
+      "investigators": 7,
+      "states": [
+        "CA",
+        "GA",
+        "LA",
+        "NC",
+        "NE",
+        "OK"
+      ]
+    },
+    {
+      "id": "NCT06423430",
+      "title": "Treatment ResistAnt Depression Subcallosal CingulatE Network DBS",
+      "phase": "Na",
+      "sponsor": "Abbott Medical Devices",
+      "sponsorClass": "Industry",
+      "condition": "Depression",
+      "status": "Open",
+      "startDate": "2024-09-11",
+      "endDate": "2029-04-01",
+      "investigators": 7,
+      "states": [
+        "GA",
+        "MO",
+        "NY",
+        "OH",
+        "PA",
+        "TX",
+        "UT"
+      ]
+    },
+    {
+      "id": "NCT06564818",
+      "title": "A Phase III, Placebo-Controlled, Randomized, Double-Blind Trial of Oral Doses of CYB003 to Assess Combined Safety and Efficacy in Humans With Major Depressive Disorder",
+      "phase": "Phase3",
+      "sponsor": "Cybin Irl Limited",
+      "sponsorClass": "Industry",
+      "condition": "Depression",
+      "status": "Open",
+      "startDate": "2024-11-15",
+      "endDate": "2026-05-01",
+      "investigators": 7,
+      "states": [
+        "CA",
+        "CO",
+        "FL",
+        "TX",
+        "UT"
+      ]
+    },
+    {
+      "id": "NCT05180773",
+      "title": "Randomized Evaluation of Bromocriptine In Myocardial Recovery THerapy for Peripartum Cardiomyopathy (REBIRTH)",
+      "phase": "Phase4",
+      "sponsor": "Dennis M. Mcnamara, Md, Ms",
+      "sponsorClass": "Other",
+      "condition": "Cardiomyopathies",
+      "status": "Open",
+      "startDate": "2022-07-27",
+      "endDate": "2028-12-31",
+      "investigators": 6,
+      "states": [
+        "CA",
+        "CT",
+        "OH",
+        "UT",
+        "VA"
+      ]
+    },
+    {
+      "id": "NCT05388474",
+      "title": "A Prospective and Retrospective Observational Study of Multidrug-Resistant Patient Outcomes With and Without Ibalizumab in a Real-World Setting: United States",
+      "phase": "",
+      "sponsor": "Theratechnologies",
+      "sponsorClass": "Industry",
+      "condition": "HIV Infections",
+      "status": "Open",
+      "startDate": "2022-03-22",
+      "endDate": "2026-06-01",
+      "investigators": 6,
+      "states": [
+        "DC",
+        "FL",
+        "NY",
+        "SC",
+        "TX"
+      ]
+    },
+    {
+      "id": "NCT05916950",
+      "title": "The THOR IDE Study",
+      "phase": "Na",
+      "sponsor": "Philips Clinical & Medical Affairs Global",
+      "sponsorClass": "Industry",
+      "condition": "Peripheral Arterial Disease",
+      "status": "Open",
+      "startDate": "2024-10-29",
+      "endDate": "2027-11-01",
+      "investigators": 6,
+      "states": [
+        "LA",
+        "PA"
+      ]
+    },
+    {
+      "id": "NCT06308653",
+      "title": "A Phase 3, Randomized, Double-Blind, Multicenter Study to Evaluate the Efficacy, Safety, and Tolerability of Psilocybin in Adults with Major Depressive Disorder (MDD)",
+      "phase": "Phase3",
+      "sponsor": "Usona Institute",
+      "sponsorClass": "Other",
+      "condition": "Depressive Disorder",
+      "status": "Open",
+      "startDate": "2024-03-05",
+      "endDate": "2026-04-01",
+      "investigators": 6,
+      "states": [
+        "AR",
+        "NJ",
+        "TX",
+        "UT",
+        "WA"
+      ]
+    },
+    {
+      "id": "NCT06504446",
+      "title": "A Phase 2b, Randomized, Double-Blind, Placebo-Controlled Study to Assess the Efficacy, Safety, and Tolerability of Taplucainium Inhalation Powder (NOC-110) in Adults with Refractory or Unexplained Chronic Cough",
+      "phase": "Phase2",
+      "sponsor": "Nocion Therapeutics",
+      "sponsorClass": "Industry",
+      "condition": "Cough",
+      "status": "Open",
+      "startDate": "2024-09-24",
+      "endDate": "2025-11-10",
+      "investigators": 6,
+      "states": [
+        "CA",
+        "FL",
+        "NC",
+        "OH",
+        "OK"
+      ]
+    },
+    {
+      "id": "NCT05156281",
+      "title": "A Randomized, Double-blind, Double-dummy, Parallel-group Study, Comparing the Efficacy and Safety of Remibrutinib Versus Teriflunomide in Participants With Relapsing Multiple Sclerosis, Followed by Extended Treatment With Open-label Remibrutinib",
+      "phase": "Phase3",
+      "sponsor": "Novartis Pharmaceuticals",
+      "sponsorClass": "Industry",
+      "condition": "Sclerosis",
+      "status": "Open",
+      "startDate": "2021-12-13",
+      "endDate": "2030-10-30",
+      "investigators": 5,
+      "states": [
+        "FL",
+        "KY",
+        "SC",
+        "TX"
+      ]
+    },
+    {
+      "id": "NCT05457985",
+      "title": "Testing Adaptive Interventions to Improve Posttraumatic Stress Disorder (PTSD) Treatment Outcomes in Federally Qualified Health Centers",
+      "phase": "Na",
+      "sponsor": "University Of Michigan",
+      "sponsorClass": "Other",
+      "condition": "Stress Disorders, Post-Traumatic",
+      "status": "Open",
+      "startDate": "2022-06-23",
+      "endDate": "2026-05-01",
+      "investigators": 5,
+      "states": [
+        "MI"
+      ]
+    },
+    {
+      "id": "NCT05514054",
+      "title": "EMBER-4: A Randomized, Open-Label, Phase 3 Study of Adjuvant Imlunestrant vs Standard Adjuvant Endocrine Therapy in Patients Who Have Previously Received 2 to 5 Years of Adjuvant Endocrine Therapy for ER+, HER2- Early Breast Cancer With an Increased Risk of Recurrence",
+      "phase": "Phase3",
+      "sponsor": "Eli Lilly And Company",
+      "sponsorClass": "Industry",
+      "condition": "Breast Neoplasms",
+      "status": "Open",
+      "startDate": "2022-10-04",
+      "endDate": "2032-03-01",
+      "investigators": 5,
+      "states": [
+        "CA",
+        "LA",
+        "TX"
+      ]
+    },
+    {
+      "id": "NCT05836987",
+      "title": "REACT-AF: Rhythm Evaluation for AntiCoagulaTion With Continuous Monitoring of Atrial Fibrillation",
+      "phase": "Phase3",
+      "sponsor": "Johns Hopkins University",
+      "sponsorClass": "Other",
+      "condition": "Atrial Fibrillation",
+      "status": "Open",
+      "startDate": "2023-07-13",
+      "endDate": "2029-07-31",
+      "investigators": 5,
+      "states": [
+        "FL",
+        "IL",
+        "ME",
+        "NM",
+        "OH"
+      ]
+    },
+    {
+      "id": "NCT06143956",
+      "title": "A Master Protocol for a Randomized, Controlled, Clinical Trial of Multiple Interventions for Chronic Weight Management in Adult Participants With Obesity or Overweight",
+      "phase": "Phase2",
+      "sponsor": "Eli Lilly And Company",
+      "sponsorClass": "Industry",
+      "condition": "Obesity",
+      "status": "Open",
+      "startDate": "2023-11-17",
+      "endDate": "2026-09-01",
+      "investigators": 5,
+      "states": [
+        "CA",
+        "MI",
+        "TX",
+        "WA"
+      ]
+    },
+    {
+      "id": "NCT06603571",
+      "title": "A Phase 2, Parallel-Group, Double-Blind, Placebo-Controlled Study to Investigate Weight Management With LY3841136 and Tirzepatide, Alone or in Combination, in Adult Participants With Obesity or Overweight With Type 2 Diabetes",
+      "phase": "Phase2",
+      "sponsor": "Eli Lilly And Company",
+      "sponsorClass": "Industry",
+      "condition": "Overweight",
+      "status": "Open",
+      "startDate": "2024-09-20",
+      "endDate": "2026-08-01",
+      "investigators": 5,
+      "states": [
+        "CA",
+        "MI",
+        "TX",
+        "WA"
+      ]
+    },
+    {
+      "id": "NCT06742281",
+      "title": "A Phase 2b, Randomized, Double-blind, Active-controlled Study of Single Dose CVXGA (CVXGA50) Intranasal COVID-19 Vaccine in Adults",
+      "phase": "Phase2",
+      "sponsor": "Cyanvac Llc",
+      "sponsorClass": "Industry",
+      "condition": "COVID-19",
+      "status": "Open",
+      "startDate": "2024-12-05",
+      "endDate": "2027-06-01",
+      "investigators": 5,
+      "states": [
+        "CA",
+        "FL",
+        "IA",
+        "TX"
+      ]
+    },
+    {
+      "id": "NCT06901349",
+      "title": "A Phase 2b Double-Blind, Randomized, Placebo-Controlled Study of Bimagrumab and Tirzepatide, Alone or in Combination, to Investigate the Efficacy and Safety in Adult Participants With Obesity or Overweight With Type 2 Diabetes",
+      "phase": "Phase2",
+      "sponsor": "Eli Lilly And Company",
+      "sponsorClass": "Industry",
+      "condition": "Obesity",
+      "status": "Open",
+      "startDate": "2025-06-01",
+      "endDate": "2027-01-01",
+      "investigators": 5,
+      "states": [
+        "FL",
+        "ID",
+        "MI",
+        "OK",
+        "WA"
+      ]
+    },
+    {
+      "id": "NCT06920940",
+      "title": "Child Bipolar Network Ketogenic Diet Approach to Bipolar Disorder in Adolescents",
+      "phase": "Na",
+      "sponsor": "University Of California, Los Angeles",
+      "sponsorClass": "Other",
+      "condition": "Bipolar Disorder",
+      "status": "Open",
+      "startDate": "2025-03-19",
+      "endDate": "2027-03-19",
+      "investigators": 5,
+      "states": [
+        "CA",
+        "CO",
+        "OH"
+      ]
+    },
+    {
+      "id": "NCT05147220",
+      "title": "A Randomized, Double-blind, Double-dummy, Parallel-group Study, Comparing the Efficacy and Safety of Remibrutinib Versus Teriflunomide in Participants With Relapsing Multiple Sclerosis, Followed by Extended Treatment With Open-label Remibrutinib",
+      "phase": "Phase3",
+      "sponsor": "Novartis Pharmaceuticals",
+      "sponsorClass": "Industry",
+      "condition": "Sclerosis",
+      "status": "Open",
+      "startDate": "2021-12-16",
+      "endDate": "2030-10-30",
+      "investigators": 4,
+      "states": [
+        "FL",
+        "MA",
+        "MO"
+      ]
+    },
+    {
+      "id": "NCT05149755",
+      "title": "Evolut™ EXPAND TAVR II Pivotal Trial",
+      "phase": "Na",
+      "sponsor": "Medtronic Cardiovascular",
+      "sponsorClass": "Industry",
+      "condition": "Aortic Valve Stenosis",
+      "status": "Open",
+      "startDate": "2022-04-27",
+      "endDate": "2034-12-01",
+      "investigators": 4,
+      "states": [
+        "LA",
+        "NY",
+        "OH"
+      ]
+    },
+    {
+      "id": "NCT05310734",
+      "title": "A Single Treatment Pharmacokinetic and Safety Study of Natroba (spinosad) Topical Suspension 0.9% W/w in Subjects 1 Month to 3 Years 11 Months of Age with an Active Scabies Infestation",
+      "phase": "Phase4",
+      "sponsor": "Cipher Pharmaceuticals Inc.",
+      "sponsorClass": "Industry",
+      "condition": "Scabies",
+      "status": "Open",
+      "startDate": "2022-03-04",
+      "endDate": "2026-03-31",
+      "investigators": 4,
+      "states": [
+        "FL",
+        "LA",
+        "TX"
+      ]
+    },
+    {
+      "id": "NCT05535946",
+      "title": "A Randomized, Double-blind, Multicenter Phase III Study to Evaluate the Long-term Efficacy and Safety of ABX464 25 mg or 50 mg Once Daily as a Maintenance Therapy in Subjects With Moderately to Severely Active Ulcerative Colitis",
+      "phase": "Phase3",
+      "sponsor": "Abivax S.A.",
+      "sponsorClass": "Industry",
+      "condition": "Ulcer",
+      "status": "Open",
+      "startDate": "2023-01-16",
+      "endDate": "2030-01-01",
+      "investigators": 4,
+      "states": [
+        "CA",
+        "FL",
+        "MI",
+        "TX"
+      ]
+    },
+    {
+      "id": "NCT05564390",
+      "title": "Master Screening and Reassessment Protocol (MSRP) for the NCI MyeloMATCH Clinical Trials",
+      "phase": "Phase2",
+      "sponsor": "National Cancer Institute (Nci)",
+      "sponsorClass": "NIH",
+      "condition": "Myelodysplastic Syndromes",
+      "status": "Open",
+      "startDate": "2024-06-18",
+      "endDate": "2029-05-15",
+      "investigators": 4,
+      "states": [
+        "CA",
+        "KY",
+        "LA",
+        "UT"
+      ]
+    },
+    {
+      "id": "NCT05568654",
+      "title": "Reducing Antimicrobial Overuse Through Targeted Therapy for Patients With Community-Acquired Pneumonia",
+      "phase": "Na",
+      "sponsor": "The Cleveland Clinic",
+      "sponsorClass": "Other",
+      "condition": "Pneumonia",
+      "status": "Open",
+      "startDate": "2022-11-01",
+      "endDate": "2026-06-30",
+      "investigators": 4,
+      "states": [
+        "OH"
+      ]
+    },
+    {
+      "id": "NCT05879926",
+      "title": "A Phase III Adjuvant Trial Evaluating the Addition of Adjuvant Chemotherapy to Ovarian Function Suppression Plus Endocrine Therapy in Premenopausal Patients With pN0-1, ER-Positive/HER2-Negative Breast Cancer and an Oncotype Recurrence Score Less Than or Equal to 25 (OFSET)",
+      "phase": "Phase3",
+      "sponsor": "Nrg Oncology",
+      "sponsorClass": "Other",
+      "condition": "Breast Neoplasms",
+      "status": "Open",
+      "startDate": "2023-08-31",
+      "endDate": "2034-07-01",
+      "investigators": 4,
+      "states": [
+        "CA",
+        "IA",
+        "LA",
+        "MD"
+      ]
+    },
+    {
+      "id": "NCT06021522",
+      "title": "A Multicenter, Open-Label, Study to Evaluate the Long-term Safety of Ecopipam Tablets in Children, Adolescents and Adults With Tourette's Disorder",
+      "phase": "Phase3",
+      "sponsor": "Emalex Biosciences Inc.",
+      "sponsorClass": "Industry",
+      "condition": "Tourette Syndrome",
+      "status": "Open",
+      "startDate": "2023-08-16",
+      "endDate": "2027-03-01",
+      "investigators": 4,
+      "states": [
+        "AL",
+        "FL",
+        "UT"
+      ]
+    },
+    {
+      "id": "NCT06576843",
+      "title": "An Open-label, Multicentre Study to Evaluate the Pharmacokinetics, Safety, and Tolerability of Repeated Doses of INDV-6001 in Adults with Moderate to Severe Opioid Use Disorder",
+      "phase": "Phase2",
+      "sponsor": "Indivior Inc.",
+      "sponsorClass": "Industry",
+      "condition": "Opioid-Related Disorders",
+      "status": "Open",
+      "startDate": "2024-09-17",
+      "endDate": "2025-10-01",
+      "investigators": 4,
+      "states": [
+        "MS",
+        "TX",
+        "UT"
+      ]
+    },
+    {
+      "id": "NCT06948422",
+      "title": "A Master Protocol to Investigate the Efficacy and Safety of Orforglipron Once Daily in Participants With Hypertension and Obesity or Overweight: Randomized, Double-Blind, Placebo-Controlled Trials (ATTAIN-HYPERTENSION)",
+      "phase": "Phase3",
+      "sponsor": "Eli Lilly And Company",
+      "sponsorClass": "Industry",
+      "condition": "Hypertension",
+      "status": "Open",
+      "startDate": "2025-05-01",
+      "endDate": "2027-09-01",
+      "investigators": 4,
+      "states": [
+        "FL",
+        "MI",
+        "SC",
+        "WA"
+      ]
+    },
+    {
+      "id": "NCT06948435",
+      "title": "A Master Protocol to Investigate the Efficacy and Safety of Orforglipron Once Daily in Participants With Hypertension and Obesity or Overweight: Randomized, Double-Blind, Placebo-Controlled Trials (ATTAIN-HYPERTENSION)",
+      "phase": "Phase3",
+      "sponsor": "Eli Lilly And Company",
+      "sponsorClass": "Industry",
+      "condition": "Obesity",
+      "status": "Open",
+      "startDate": "2025-05-01",
+      "endDate": "2027-09-01",
+      "investigators": 4,
+      "states": [
+        "FL",
+        "MI",
+        "SC",
+        "WA"
+      ]
+    },
+    {
+      "id": "NCT06952530",
+      "title": "A Master Protocol to Investigate the Efficacy and Safety of Orforglipron Once Daily in Participants With Hypertension and Obesity or Overweight: Randomized, Double-Blind, Placebo-Controlled Trials (ATTAIN-HYPERTENSION)",
+      "phase": "Phase3",
+      "sponsor": "Eli Lilly And Company",
+      "sponsorClass": "Industry",
+      "condition": "Overweight",
+      "status": "Open",
+      "startDate": "2025-05-01",
+      "endDate": "2027-09-01",
+      "investigators": 4,
+      "states": [
+        "FL",
+        "MI",
+        "SC",
+        "WA"
+      ]
+    },
+    {
+      "id": "NCT03878316",
+      "title": "Randomized, Double Blind, Placebo-Controlled Trial of the Efficacy of Intranasal Oxytocin for the Treatment of Alcohol Use Disorder",
+      "phase": "Phase2",
+      "sponsor": "National Institute On Alcohol Abuse And Alcoholism (Niaaa)",
+      "sponsorClass": "NIH",
+      "condition": "Alcohol Drinking",
+      "status": "Closed",
+      "startDate": "2022-06-29",
+      "endDate": "2023-10-13",
+      "investigators": 3,
+      "states": [
+        "MA",
+        "NY",
+        "VA"
+      ]
+    },
+    {
+      "id": "NCT05063539",
+      "title": "Assessment of Safety, Tolerability, and Efficacy of LY3372689 in Early Symptomatic Alzheimer's Disease",
+      "phase": "Phase2",
+      "sponsor": "Eli Lilly And Company",
+      "sponsorClass": "Industry",
+      "condition": "Alzheimer Disease",
+      "status": "Open",
+      "startDate": "2021-09-16",
+      "endDate": "2025-05-01",
+      "investigators": 3,
+      "states": [
+        "FL",
+        "ME",
+        "OH"
+      ]
+    },
+    {
+      "id": "NCT05074433",
+      "title": "A Phase 3, Randomized, Double-Blind, Placebo-Controlled Study to Evaluate the Efficacy and Safety of Anti-Spike SARS-CoV-2 Monoclonal Antibodies as Pre-Exposure Prophylaxis to Prevent COVID-19 in Immunocompromised Participants",
+      "phase": "Phase3",
+      "sponsor": "Regeneron Pharmaceuticals",
+      "sponsorClass": "Industry",
+      "condition": "COVID-19",
+      "status": "Closed",
+      "startDate": "2021-10-25",
+      "endDate": "2022-05-18",
+      "investigators": 3,
+      "states": [
+        "NY",
+        "TX"
+      ]
+    },
+    {
+      "id": "NCT05081388",
+      "title": "A Phase 1/2/3 Adaptive Study to Evaluate the Safety, Tolerability, and Efficacy of REGN14256+Imdevimab for the Treatment of COVID-19 Patients Without Risk Factors for Progression to Severe Disease",
+      "phase": "Phase1",
+      "sponsor": "Regeneron Pharmaceuticals",
+      "sponsorClass": "Industry",
+      "condition": "COVID-19",
+      "status": "Closed",
+      "startDate": "2021-11-08",
+      "endDate": "2022-06-30",
+      "investigators": 3,
+      "states": [
+        "CA",
+        "MS",
+        "TX"
+      ]
+    },
+    {
+      "id": "NCT05280093",
+      "title": "Hybrid Epicardial and Endocardial Sinus Node Sparing Ablation Therapy for Inappropriate Sinus Tachycardia",
+      "phase": "Na",
+      "sponsor": "Atricure, Inc.",
+      "sponsorClass": "Industry",
+      "condition": "Tachycardia, Sinus",
+      "status": "Open",
+      "startDate": "2022-05-31",
+      "endDate": "2027-06-01",
+      "investigators": 3,
+      "states": [
+        "CT",
+        "DC",
+        "UT"
+      ]
+    },
+    {
+      "id": "NCT05440643",
+      "title": "A Phase I/II Trial in 3 Parts Assessing the Safety, Tolerability, and Efficacy of a Once-daily Peanut Sublingual Immunotherapy (SLIT) Tablet in Adults, Adolescents, and Children With Peanut Allergy",
+      "phase": "Phase1/Phase2",
+      "sponsor": "Alk-Abelló A/S",
+      "sponsorClass": "Industry",
+      "condition": "Peanut Hypersensitivity",
+      "status": "Open",
+      "startDate": "2022-09-07",
+      "endDate": "2026-02-01",
+      "investigators": 3,
+      "states": [
+        "CA",
+        "FL",
+        "MI"
+      ]
+    },
+    {
+      "id": "NCT05478304",
+      "title": "Left Atrial Appendage Exclusion for Prophylactic Stroke Reduction Trial",
+      "phase": "Na",
+      "sponsor": "Atricure, Inc.",
+      "sponsorClass": "Industry",
+      "condition": "Ischemic Stroke",
+      "status": "Open",
+      "startDate": "2023-01-25",
+      "endDate": "2032-04-01",
+      "investigators": 3,
+      "states": [
+        "DC",
+        "NC",
+        "PA"
+      ]
+    },
+    {
+      "id": "NCT05489588",
+      "title": "Evaluation of the GORE® VIAFORT Vascular Stent for Treatment of Symptomatic Iliofemoral Venous Obstruction",
+      "phase": "Na",
+      "sponsor": "W.L.Gore & Associates",
+      "sponsorClass": "Industry",
+      "condition": "Ulcer",
+      "status": "Open",
+      "startDate": "2023-03-02",
+      "endDate": "2031-03-01",
+      "investigators": 3,
+      "states": [
+        "DC",
+        "NY",
+        "OH"
+      ]
+    },
+    {
+      "id": "NCT05536804",
+      "title": "Tirzepatide Study of Renal Function in People With Overweight or Obesity and Chronic Kidney Disease With or Without Type 2 Diabetes: Focus on Kidney Hypoxia in Relation to Fatty Kidney Disease Using Multiparametric Magnetic Resonance Imaging",
+      "phase": "Phase2",
+      "sponsor": "Eli Lilly And Company",
+      "sponsorClass": "Industry",
+      "condition": "Obesity",
+      "status": "Open",
+      "startDate": "2023-02-08",
+      "endDate": "2026-10-01",
+      "investigators": 3,
+      "states": [
+        "IN",
+        "MI"
+      ]
+    },
+    {
+      "id": "NCT05554406",
+      "title": "A Randomized Phase II Study Comparing Cytarabine + Daunorubicin (7 + 3) vs (Daunorubicin and Cytarabine) Liposome, Cytarabine + Daunorubicin + Venetoclax, Azacitidine + Venetoclax, and (Daunorubicin and Cytarabine) Liposome + Venetoclax in Patients Aged 59 or Younger Who Are Considered High-Risk (Ad",
+      "phase": "Phase2",
+      "sponsor": "National Cancer Institute (Nci)",
+      "sponsorClass": "NIH",
+      "condition": "Myeloproliferative Disorders",
+      "status": "Open",
+      "startDate": "2024-09-25",
+      "endDate": "2027-03-31",
+      "investigators": 3,
+      "states": [
+        "CA",
+        "KY",
+        "UT"
+      ]
+    },
+    {
+      "id": "NCT05598333",
+      "title": "A Phase 2, Adaptive, Double-blinded, Placebo Controlled, Randomized, Multi-center Trial to Evaluate the Efficacy, Safety and Tolerability of Intracoronary Infusion of AB-1002 in Adult Subjects With New York Heart Association (NYHA) Class III Heart Failure and Non-ischemic Cardiomyopathy",
+      "phase": "Phase2",
+      "sponsor": "Askbio Inc",
+      "sponsorClass": "Industry",
+      "condition": "Heart Failure",
+      "status": "Open",
+      "startDate": "2023-10-20",
+      "endDate": "2030-12-31",
+      "investigators": 3,
+      "states": [
+        "OH",
+        "SC"
+      ]
+    },
+    {
+      "id": "NCT05644262",
+      "title": "Life's End Benefits of cannaBidiol and tetrahYdrocannabinol (LiBBY)",
+      "phase": "Phase2",
+      "sponsor": "University Of Southern California",
+      "sponsorClass": "Other",
+      "condition": "Dementia",
+      "status": "Open",
+      "startDate": "2023-12-18",
+      "endDate": "2025-12-01",
+      "investigators": 3,
+      "states": [
+        "CA",
+        "DC",
+        "OH"
+      ]
+    },
+    {
+      "id": "NCT05762107",
+      "title": "A Phase 2a Randomized, Double-blind, Placebo-controlled, Multiple-dose, Crossover Study of the Effect of ZT-01 on Frequency of Nocturnal Hypoglycemia in Type 1 Diabetes Mellitus",
+      "phase": "Phase2",
+      "sponsor": "Zucara Therapeutics Inc.",
+      "sponsorClass": "Industry",
+      "condition": "Diabetes Mellitus",
+      "status": "Open",
+      "startDate": "2023-07-28",
+      "endDate": "2025-07-01",
+      "investigators": 3,
+      "states": [
+        "CA",
+        "FL",
+        "TX"
+      ]
+    },
+    {
+      "id": "NCT05889624",
+      "title": "Cognitive Behavioral Therapy Via Telehealth + Amitriptyline Compared to Cognitive Behavioral Therapy Via Telehealth: Pediatric Migraine Prevention (Responding With Evidence and Access for Childhood Headaches)",
+      "phase": "Na",
+      "sponsor": "Children's Hospital Medical Center, Cincinnati",
+      "sponsorClass": "Other",
+      "condition": "Migraine with Aura",
+      "status": "Open",
+      "startDate": "2023-08-22",
+      "endDate": "2027-12-31",
+      "investigators": 3,
+      "states": [
+        "GA",
+        "NY"
+      ]
+    },
+    {
+      "id": "NCT05934487",
+      "title": "A Prospective, Multi-Center, Open Label, Randomized Control Clinical Trial Evaluating the Safety and Efficacy of the Cordella™ Pulmonary Artery Sensor System in New York Heart Association (NYHA) Class II-III Heart Failure Patients",
+      "phase": "Na",
+      "sponsor": "Endotronix, Inc.",
+      "sponsorClass": "Industry",
+      "condition": "Heart Failure",
+      "status": "Open",
+      "startDate": "2023-11-29",
+      "endDate": "2033-09-01",
+      "investigators": 3,
+      "states": [
+        "CA",
+        "GA",
+        "OH"
+      ]
+    },
+    {
+      "id": "NCT05943535",
+      "title": "A Randomized, Double-blind, Placebo-controlled, Multinational, Phase 3 Study of the Efficacy and Safety of Inhaled Treprostinil in Subjects With Progressive Pulmonary Fibrosis (TETON-PPF)",
+      "phase": "Phase3",
+      "sponsor": "United Therapeutics",
+      "sponsorClass": "Industry",
+      "condition": "Pulmonary Fibrosis",
+      "status": "Open",
+      "startDate": "2023-10-30",
+      "endDate": "2027-11-01",
+      "investigators": 3,
+      "states": [
+        "NC",
+        "NY",
+        "PA"
+      ]
+    },
+    {
+      "id": "NCT06030063",
+      "title": "The Society for Obstetric Anesthesia and Perinatology Research Network General Anesthesia Registry",
+      "phase": "",
+      "sponsor": "Yale University",
+      "sponsorClass": "Other",
+      "condition": "Unspecified",
+      "status": "Open",
+      "startDate": "2024-02-22",
+      "endDate": "2029-09-01",
+      "investigators": 3,
+      "states": [
+        "NH",
+        "SC",
+        "VA"
+      ]
+    },
+    {
+      "id": "NCT06074562",
+      "title": "A Phase 2, Randomized, Double-Blind, Placebo Controlled, Dose-Ranging Study to Evaluate LY3556050 in Adult Participants With Diabetic Peripheral Neuropathic Pain",
+      "phase": "Phase2",
+      "sponsor": "Eli Lilly And Company",
+      "sponsorClass": "Industry",
+      "condition": "Peripheral Nervous System Diseases",
+      "status": "Open",
+      "startDate": "2023-10-05",
+      "endDate": "2025-07-01",
+      "investigators": 3,
+      "states": [
+        "CA",
+        "MS",
+        "NJ"
+      ]
+    },
+    {
+      "id": "NCT06104319",
+      "title": "A Phase 2a, Single Dose, Open-label, Dose Exploration Study to Assess the PK-PD Activity, Safety, and Tolerability of GSK4532990 in Adult. Participants With NASH or Suspected NASH",
+      "phase": "Phase2",
+      "sponsor": "Glaxosmithkline",
+      "sponsorClass": "Industry",
+      "condition": "Non-alcoholic Fatty Liver Disease",
+      "status": "Open",
+      "startDate": "2024-01-22",
+      "endDate": "2025-09-23",
+      "investigators": 3,
+      "states": [
+        "FL"
+      ]
+    },
+    {
+      "id": "NCT06238778",
+      "title": "A Phase 2b Randomized, Double-blind Trial Comparing HDV-Insulin Lispro Versus Insulin Lispro Alone in Adults With Type 1 Diabetes Receiving Insulin Degludec",
+      "phase": "Phase2",
+      "sponsor": "Diasome Pharmaceuticlas, Inc.",
+      "sponsorClass": "Industry",
+      "condition": "Diabetes Mellitus",
+      "status": "Open",
+      "startDate": "2024-01-23",
+      "endDate": "2025-12-01",
+      "investigators": 3,
+      "states": [
+        "CA",
+        "GA",
+        "TX"
+      ]
+    },
+    {
+      "id": "NCT06296394",
+      "title": "Health Outcomes of Parents With Cystic Fibrosis-Aim 2",
+      "phase": "",
+      "sponsor": "University Of Pittsburgh",
+      "sponsorClass": "Other",
+      "condition": "Fibrosis",
+      "status": "Open",
+      "startDate": "2024-05-29",
+      "endDate": "2031-02-01",
+      "investigators": 3,
+      "states": [
+        "CO",
+        "IN",
+        "PA"
+      ]
+    },
+    {
+      "id": "NCT06317649",
+      "title": "A Randomized Phase II Study of Venetoclax and HMA-Based Therapies for the Treatment of Older and Unfit Adults With Newly Diagnosed FLT3-Mutated Acute Myeloid Leukemia (AML): A MyeloMATCH Treatment Trial",
+      "phase": "Phase2",
+      "sponsor": "National Cancer Institute (Nci)",
+      "sponsorClass": "NIH",
+      "condition": "Leukemia, Myeloid, Acute",
+      "status": "Open",
+      "startDate": "2024-09-27",
+      "endDate": "2025-10-31",
+      "investigators": 3,
+      "states": [
+        "CA",
+        "KY",
+        "UT"
+      ]
+    },
+    {
+      "id": "NCT06337318",
+      "title": "Randomized Phase III Study of Mosunetuzumab vs. Rituximab for Low Tumor Burden Follicular Lymphoma",
+      "phase": "Phase3",
+      "sponsor": "National Cancer Institute (Nci)",
+      "sponsorClass": "NIH",
+      "condition": "Lymphoma",
+      "status": "Open",
+      "startDate": "2024-10-23",
+      "endDate": "2032-03-31",
+      "investigators": 3,
+      "states": [
+        "CA",
+        "IA",
+        "LA"
+      ]
+    },
+    {
+      "id": "NCT06378632",
+      "title": "An International Multi-center Observational, Single-arm, Blinded Study to Assess the Performance of the Cordio HearO System",
+      "phase": "",
+      "sponsor": "Cordio Medical",
+      "sponsorClass": "Industry",
+      "condition": "Heart Failure",
+      "status": "Open",
+      "startDate": "2022-02-11",
+      "endDate": "2025-07-15",
+      "investigators": 3,
+      "states": [
+        "FL",
+        "NC",
+        "OH"
+      ]
+    },
+    {
+      "id": "NCT06419608",
+      "title": "A Phase 2 Multicenter, Randomized, Double-blind, Placebo-controlled, Study to Evaluate the Efficacy and Safety of BHV-7000 Monotherapy in Major Depressive Disorder",
+      "phase": "Phase2",
+      "sponsor": "Biohaven Therapeutics Ltd.",
+      "sponsorClass": "Industry",
+      "condition": "Depressive Disorder",
+      "status": "Open",
+      "startDate": "2024-05-28",
+      "endDate": "2025-07-01",
+      "investigators": 3,
+      "states": [
+        "CA",
+        "LA",
+        "NV"
+      ]
+    },
+    {
+      "id": "NCT06568042",
+      "title": "A Phase 2, Randomized, Double-Blind, Placebo Controlled, Dose-Finding Study Evaluating LY3848575 in Chronic Neuropathic Pain Associated With Distal Sensory Polyneuropathy",
+      "phase": "Phase2",
+      "sponsor": "Eli Lilly And Company",
+      "sponsorClass": "Industry",
+      "condition": "Polyneuropathies",
+      "status": "Open",
+      "startDate": "2024-08-22",
+      "endDate": "2026-09-01",
+      "investigators": 3,
+      "states": [
+        "MS",
+        "NY",
+        "WA"
+      ]
+    },
+    {
+      "id": "NCT06649045",
+      "title": "A Master Protocol to Investigate the Efficacy and Safety of Orforglipron Once Daily in Participants Who Have Obstructive Sleep Apnea and Obesity or Overweight: A Randomized, Double-Blind, Placebo-Controlled Trial",
+      "phase": "Phase3",
+      "sponsor": "Eli Lilly And Company",
+      "sponsorClass": "Industry",
+      "condition": "Sleep Apnea, Obstructive",
+      "status": "Open",
+      "startDate": "2024-10-22",
+      "endDate": "2027-01-01",
+      "investigators": 3,
+      "states": [
+        "CA",
+        "CO",
+        "TX"
+      ]
+    },
+    {
+      "id": "NCT06747468",
+      "title": "A Phase 3 Multicenter, Randomized, Double-Blind, Placebo-Controlled Study to Evaluate the Efficacy and Safety of Avexitide in Participants With Post-Bariatric Hypoglycemia",
+      "phase": "Phase3",
+      "sponsor": "Amylyx Pharmaceuticals Inc.",
+      "sponsorClass": "Industry",
+      "condition": "Hypoglycemia",
+      "status": "Open",
+      "startDate": "2025-04-29",
+      "endDate": "2026-10-01",
+      "investigators": 3,
+      "states": [
+        "FL",
+        "GA",
+        "TX"
+      ]
+    },
+    {
+      "id": "NCT06914895",
+      "title": "A Phase 3, Multicenter, Randomized, Double-Blind, Placebo-Controlled, Parallel-Group Study Evaluating the Efficacy and Safety of Tirzepatide Once Weekly Compared to Placebo in Adult Participants With Type 1 Diabetes and Obesity or Overweight",
+      "phase": "Phase3",
+      "sponsor": "Eli Lilly And Company",
+      "sponsorClass": "Industry",
+      "condition": "Diabetes Mellitus",
+      "status": "Open",
+      "startDate": "2025-04-25",
+      "endDate": "2027-05-01",
+      "investigators": 3,
+      "states": [
+        "GA",
+        "MS",
+        "NY"
+      ]
+    },
+    {
+      "id": "NCT03313622",
+      "title": "Locating Biomarkers of Medically Intractable Obsessive Compulsive Disorder (OCD) Through the Use of Behavioral Tasks",
+      "phase": "",
+      "sponsor": "Baylor College Of Medicine",
+      "sponsorClass": "Other",
+      "condition": "Compulsive Personality Disorder",
+      "status": "Open",
+      "startDate": "2025-03-01",
+      "endDate": "2026-03-01",
+      "investigators": 2,
+      "states": [
+        "TX"
+      ]
+    },
+    {
+      "id": "NCT04444622",
+      "title": "Phase IIB Open-Label Study to Assess the Safety and Efficacy of STIMVAX® as Third-line Therapy for Metastatic Colorectal Cancer",
+      "phase": "Phase2",
+      "sponsor": "Mirror Biologics, Inc.",
+      "sponsorClass": "Industry",
+      "condition": "Colorectal Neoplasms",
+      "status": "Open",
+      "startDate": "2021-07-12",
+      "endDate": "2025-08-01",
+      "investigators": 2,
+      "states": [
+        "TX"
+      ]
+    },
+    {
+      "id": "NCT04453293",
+      "title": "A Proof-of Concept, Randomized, Controlled Study of Tuberculosis Immunization With BCG to Prevent Infection in Healthy Adults (TIPI Trial)",
+      "phase": "Phase3",
+      "sponsor": "Henry M. Jackson Foundation For The Advancement Of Military Medicine",
+      "sponsorClass": "Other",
+      "condition": "Infections",
+      "status": "Open",
+      "startDate": "2021-12-01",
+      "endDate": "2027-09-30",
+      "investigators": 2,
+      "states": [
+        "PA",
+        "UT"
+      ]
+    },
+    {
+      "id": "NCT04627922",
+      "title": "N-Acetylcysteine for Smoking Cessation in Tobacco and Cannabis Co-Use: a Randomized Controlled Trial",
+      "phase": "Phase4",
+      "sponsor": "Ellen Herbst",
+      "sponsorClass": "Other",
+      "condition": "Substance-Related Disorders",
+      "status": "Open",
+      "startDate": "2021-08-25",
+      "endDate": "2025-06-30",
+      "investigators": 2,
+      "states": [
+        "CA"
+      ]
+    },
+    {
+      "id": "NCT04787822",
+      "title": "Long Term Follow up of the Lung Transplant Outcomes Group Cohort",
+      "phase": "",
+      "sponsor": "University Of Pennsylvania",
+      "sponsorClass": "Other",
+      "condition": "Unspecified",
+      "status": "Open",
+      "startDate": "2021-06-15",
+      "endDate": "2026-05-31",
+      "investigators": 2,
+      "states": [
+        "PA"
+      ]
+    },
+    {
+      "id": "NCT04857359",
+      "title": "Phase 2b/3, Randomized, Double-blind, Placebo-controlled Study to Evaluate the Safety and Efficacy of Dipraglurant (ADX48621) for the Treatment of Dyskinesia in Patients With Parkinson's Disease Receiving Levodopa-based Therapy",
+      "phase": "Phase2/Phase3",
+      "sponsor": "Addex Pharma S.A.",
+      "sponsorClass": "Industry",
+      "condition": "Parkinson Disease",
+      "status": "Open",
+      "startDate": "2021-08-06",
+      "endDate": "2023-08-01",
+      "investigators": 2,
+      "states": [
+        "GA",
+        "VA"
+      ]
+    },
+    {
+      "id": "NCT04880473",
+      "title": "A Minimal-Risk, Multi-Center, Prospective, Clinical Trial to Evaluate the PrevisEA Device for Predicting Gastrointestinal Impairment",
+      "phase": "Na",
+      "sponsor": "Entac Medical Inc.",
+      "sponsorClass": "Industry",
+      "condition": "Unspecified",
+      "status": "Open",
+      "startDate": "2021-09-14",
+      "endDate": "2024-12-01",
+      "investigators": 2,
+      "states": [
+        "OH"
+      ]
+    },
+    {
+      "id": "NCT04977986",
+      "title": "A Randomized, Double-Blind, Placebo-Controlled, Multiple-Center, Efficacy and Safety Study of ZYN002 Administered As a Transdermal Gel to Children, Adolescents and Young Adults with Fragile X Syndrome - RECONNECT",
+      "phase": "Phase3",
+      "sponsor": "Zynerba Pharmaceuticals, Inc.",
+      "sponsorClass": "Industry",
+      "condition": "Syndrome",
+      "status": "Open",
+      "startDate": "2021-09-13",
+      "endDate": "2025-05-01",
+      "investigators": 2,
+      "states": [
+        "MA",
+        "OK"
+      ]
+    },
+    {
+      "id": "NCT04987294",
+      "title": "A Randomized, Double-Blind, Placebo-Controlled Study of ALLN-346 (Engineered Urate Oxidase) in Hyperuricemic Subjects With Gout and Mild to Moderate Chronic Kidney Disease",
+      "phase": "Phase2",
+      "sponsor": "Allena Pharmaceuticals",
+      "sponsorClass": "Industry",
+      "condition": "Gout",
+      "status": "Closed",
+      "startDate": "2022-09-02",
+      "endDate": "2022-09-02",
+      "investigators": 2,
+      "states": [
+        "AL",
+        "FL"
+      ]
+    },
+    {
+      "id": "NCT04998019",
+      "title": "Pragmatic Efficacy Trial of mHealth to Improve HIV Outcomes in the DC Cohort",
+      "phase": "Na",
+      "sponsor": "George Washington University",
+      "sponsorClass": "Other",
+      "condition": "Acquired Immunodeficiency Syndrome",
+      "status": "Open",
+      "startDate": "2022-12-12",
+      "endDate": "2025-06-30",
+      "investigators": 2,
+      "states": [
+        "DC"
+      ]
+    },
+    {
+      "id": "NCT05044195",
+      "title": "A Phase 3, Randomized, Observer-blind, Controlled, Multicenter, Clinical Study to Evaluate Immunogenicity and Safety of an MF59-adjuvanted Quadrivalent Subunit Inactivated Influenza Vaccine in Comparison With a Licensed Quadrivalent Influenza Vaccine, in Adults 50 to 64 Years of Age",
+      "phase": "Phase3",
+      "sponsor": "Seqirus",
+      "sponsorClass": "Industry",
+      "condition": "Influenza, Human",
+      "status": "Closed",
+      "startDate": "2021-09-30",
+      "endDate": "2022-09-09",
+      "investigators": 2,
+      "states": [
+        "IA",
+        "NY"
+      ]
+    },
+    {
+      "id": "NCT05048719",
+      "title": "A Phase 2 Study of Once-Daily LY3502970 Compared With Placebo and Once-Weekly Dulaglutide in Participants With Type 2 Diabetes Mellitus",
+      "phase": "Phase2",
+      "sponsor": "Eli Lilly And Company",
+      "sponsorClass": "Industry",
+      "condition": "Diabetes Mellitus",
+      "status": "Closed",
+      "startDate": "2021-09-15",
+      "endDate": "2022-09-30",
+      "investigators": 2,
+      "states": [
+        "CA",
+        "TX"
+      ]
+    },
+    {
+      "id": "NCT05112432",
+      "title": "EPI-MINN: Targeting Cognition and Motivation in Coordinated Specialty Care for Early Psychosis",
+      "phase": "Na",
+      "sponsor": "University Of Minnesota",
+      "sponsorClass": "Other",
+      "condition": "Mental Disorders",
+      "status": "Open",
+      "startDate": "2021-08-12",
+      "endDate": "2025-07-31",
+      "investigators": 2,
+      "states": [
+        "MN"
+      ]
+    },
+    {
+      "id": "NCT05174169",
+      "title": "Colon Adjuvant Chemotherapy Based on Evaluation of Residual Disease",
+      "phase": "Phase2/Phase3",
+      "sponsor": "Nrg Oncology",
+      "sponsorClass": "Other",
+      "condition": "Colonic Neoplasms",
+      "status": "Open",
+      "startDate": "2022-03-10",
+      "endDate": "2030-03-10",
+      "investigators": 2,
+      "states": [
+        "AZ",
+        "IA"
+      ]
+    },
+    {
+      "id": "NCT05199818",
+      "title": "Efficacy and Safety of Palonosetron HCl Buccal Film Versus IV Palonosetron for Prevention of Chemotherapy-induced Nausea and Vomiting in Cancer Patients Receiving Moderately Emetogenic Chemotherapy",
+      "phase": "Phase3",
+      "sponsor": "Xiamen Lp Pharmaceutical Co., Ltd",
+      "sponsorClass": "Industry",
+      "condition": "Vomiting",
+      "status": "Open",
+      "startDate": "2022-03-01",
+      "endDate": "2023-11-01",
+      "investigators": 2,
+      "states": [
+        "CA",
+        "FL"
+      ]
+    },
+    {
+      "id": "NCT05201638",
+      "title": "A Multi-Center, Randomized, Double-Blinded Phase 3 Study to Evaluate the Efficacy, Safety, and Tolerability of IMU-838 Versus Placebo in Adults With Relapsing Multiple Sclerosis (ENSURE-2)",
+      "phase": "Phase3",
+      "sponsor": "Immunic Ag",
+      "sponsorClass": "Industry",
+      "condition": "Multiple Sclerosis",
+      "status": "Open",
+      "startDate": "2022-01-12",
+      "endDate": "2032-10-01",
+      "investigators": 2,
+      "states": [
+        "FL",
+        "KY"
+      ]
+    },
+    {
+      "id": "NCT05262270",
+      "title": "Randomized, Placebo-Controlled Trial of Extended-Release Naltrexone and Monthly Extended-Release Buprenorphine for Cocaine Use Disorder (CURB-2)",
+      "phase": "Phase2",
+      "sponsor": "University Of Texas Southwestern Medical Center",
+      "sponsorClass": "Other",
+      "condition": "Unspecified",
+      "status": "Open",
+      "startDate": "2023-04-18",
+      "endDate": "2026-09-01",
+      "investigators": 2,
+      "states": [
+        "MD",
+        "TX"
+      ]
+    },
+    {
+      "id": "NCT05335928",
+      "title": "AbatacepT for ImmUne Checkpoint Inhibitor Associated Myocarditis (ATRIUM): a Phase 3, Investigator-Initiated, Randomized, Double-Blind, Placebo-Controlled Study to Evaluate the Efficacy and Safety of Abatacept in ICI Myocarditis",
+      "phase": "Phase3",
+      "sponsor": "Massachusetts General Hospital",
+      "sponsorClass": "Other",
+      "condition": "Myocarditis",
+      "status": "Open",
+      "startDate": "2022-06-22",
+      "endDate": "2027-04-01",
+      "investigators": 2,
+      "states": [
+        "DC",
+        "OH"
+      ]
+    },
+    {
+      "id": "NCT05382208",
+      "title": "Doxycycline for Emphysema in People Living With HIV (The DEPTH Trial)",
+      "phase": "Phase2",
+      "sponsor": "Weill Medical College Of Cornell University",
+      "sponsorClass": "Other",
+      "condition": "Pulmonary Emphysema",
+      "status": "Open",
+      "startDate": "2022-08-22",
+      "endDate": "2027-02-01",
+      "investigators": 2,
+      "states": [
+        "OH",
+        "WA"
+      ]
+    },
+    {
+      "id": "NCT05427123",
+      "title": "A Collaborative Treatment Network for Youth With or at High Risk for Bipolar Disorder",
+      "phase": "",
+      "sponsor": "University Of California, Los Angeles",
+      "sponsorClass": "Other",
+      "condition": "Neurodevelopmental Disorders",
+      "status": "Open",
+      "startDate": "2022-07-01",
+      "endDate": "2027-07-01",
+      "investigators": 2,
+      "states": [
+        "CA"
+      ]
+    }
+  ],
+  "untappedPIs": [
+    {
+      "npi": 1750558979,
+      "name": "Dr. Muhammad Alam",
+      "specialty": "Addiction Psychiatry",
+      "state": "GA",
+      "region": "Southeast",
+      "patientCount": 351,
+      "decile": 10,
+      "hcoName": "TURNING POINT CARE CENTER LLC",
+      "referralCentrality": 0.0
+    },
+    {
+      "npi": 1811651136,
+      "name": "Dr. Samwel Rorya",
+      "specialty": "Psychiatric/Mental Health",
+      "state": "—",
+      "region": "National",
+      "patientCount": 318,
+      "decile": 10,
+      "hcoName": "Unknown",
+      "referralCentrality": 0.0
+    },
+    {
+      "npi": 1811169501,
+      "name": "Dr. Shakeel Raza",
+      "specialty": "Child And Adolescent Psychiatry",
+      "state": "TX",
+      "region": "Southwest",
+      "patientCount": 299,
+      "decile": 10,
+      "hcoName": "TEXAS WEST OAKS HOSPITAL LP",
+      "referralCentrality": 0.0
+    },
+    {
+      "npi": 1750318598,
+      "name": "Dr. Paul Young",
+      "specialty": "Psychiatry",
+      "state": "TX",
+      "region": "Southwest",
+      "patientCount": 284,
+      "decile": 10,
+      "hcoName": "GULF COAST MEDICAL",
+      "referralCentrality": 0.0
+    },
+    {
+      "npi": 1033525050,
+      "name": "Dr. Ramakrishna Veluri",
+      "specialty": "Psychiatry",
+      "state": "TX",
+      "region": "Southwest",
+      "patientCount": 271,
+      "decile": 10,
+      "hcoName": "MESA SPRINGS LLC",
+      "referralCentrality": 0.0
+    },
+    {
+      "npi": 1356464283,
+      "name": "Dr. Scott Mayers",
+      "specialty": "Psychiatry",
+      "state": "LA",
+      "region": "Southeast",
+      "patientCount": 259,
+      "decile": 10,
+      "hcoName": "OCEANS BEHAVIORAL HOSPITAL OF LAFAYETTE LLC",
+      "referralCentrality": 0.0
+    },
+    {
+      "npi": 1417277419,
+      "name": "Dr. Goshawn Chawla",
+      "specialty": "Child And Adolescent Psychiatry",
+      "state": "TX",
+      "region": "Southwest",
+      "patientCount": 253,
+      "decile": 10,
+      "hcoName": "NCED MENTAL HEALTH CENTER",
+      "referralCentrality": 0.0
+    },
+    {
+      "npi": 1588772545,
+      "name": "Dr. Oliver Gregory",
+      "specialty": "Child And Adolescent Psychiatry",
+      "state": "TN",
+      "region": "Southeast",
+      "patientCount": 240,
+      "decile": 10,
+      "hcoName": "PARKRIDGE MEDICAL CENTER INC",
+      "referralCentrality": 0.0
+    },
+    {
+      "npi": 1104118918,
+      "name": "Dr. James Butler",
+      "specialty": "Clinical Genetics (M.D.)",
+      "state": "TX",
+      "region": "Southwest",
+      "patientCount": 238,
+      "decile": 10,
+      "hcoName": "AUDUBON BEHAVIORAL HEALTHCARE OF LUFKIN LP",
+      "referralCentrality": 0.0
+    },
+    {
+      "npi": 1902073216,
+      "name": "Dr. Felix Geller",
+      "specialty": "Psychiatry",
+      "state": "NJ",
+      "region": "Northeast",
+      "patientCount": 232,
+      "decile": 10,
+      "hcoName": "OCEAN MENTAL HEALTH SERVICES INC",
+      "referralCentrality": 0.0
+    },
+    {
+      "npi": 1346516101,
+      "name": "Dr. Lindsey Serkes",
+      "specialty": "Anatomic Pathology And Clinical Pathology",
+      "state": "VA",
+      "region": "Southeast",
+      "patientCount": 230,
+      "decile": 10,
+      "hcoName": "UNIVERSITY OF VIRGINIA MEDICAL CENTER",
+      "referralCentrality": 0.0
+    },
+    {
+      "npi": 1659304350,
+      "name": "Dr. Damaso Oliva",
+      "specialty": "Psychiatry",
+      "state": "TX",
+      "region": "Southwest",
+      "patientCount": 230,
+      "decile": 10,
+      "hcoName": "ALAMO PSYCHIATRIC CARE P A",
+      "referralCentrality": 0.0
+    },
+    {
+      "npi": 1982191409,
+      "name": "Dr. Blake Henchcliffe",
+      "specialty": "Psychiatry",
+      "state": "LA",
+      "region": "Southeast",
+      "patientCount": 224,
+      "decile": 10,
+      "hcoName": "OCEANS BEHAVIORAL HOSPITAL OF LAKE CHARLES LLC",
+      "referralCentrality": 0.0
+    },
+    {
+      "npi": 1902248891,
+      "name": "Dr. Anita Collins -Mccullum",
+      "specialty": "Psychiatric/Mental Health",
+      "state": "KY",
+      "region": "Southeast",
+      "patientCount": 211,
+      "decile": 10,
+      "hcoName": "MOUNTAIN COMPREHENSIVE HEALTH CORPORATION",
+      "referralCentrality": 0.0
+    },
+    {
+      "npi": 1568464733,
+      "name": "Dr. Rhonda Robertson",
+      "specialty": "Nurse Practitioner",
+      "state": "LA",
+      "region": "Southeast",
+      "patientCount": 201,
+      "decile": 10,
+      "hcoName": "NEW DAY RECOVERY LLC",
+      "referralCentrality": 0.0
+    },
+    {
+      "npi": 1376521773,
+      "name": "Dr. David Chess",
+      "specialty": "Geriatric Medicine",
+      "state": "—",
+      "region": "National",
+      "patientCount": 200,
+      "decile": 10,
+      "hcoName": "Unknown",
+      "referralCentrality": 0.0
+    },
+    {
+      "npi": 1508405382,
+      "name": "Dr. Adebayo Arowolo",
+      "specialty": "Psychiatric/Mental Health",
+      "state": "NJ",
+      "region": "Northeast",
+      "patientCount": 194,
+      "decile": 10,
+      "hcoName": "INSPIRA MEDICAL CENTERS INC",
+      "referralCentrality": 0.0
+    },
+    {
+      "npi": 1932549250,
+      "name": "Dr. Syed Zaidi",
+      "specialty": "Psychiatry",
+      "state": "TX",
+      "region": "Southwest",
+      "patientCount": 191,
+      "decile": 10,
+      "hcoName": "OCEANS BEHAVIORAL HOSPITAL OF KATY LLC",
+      "referralCentrality": 0.0
+    },
+    {
+      "npi": 1245337708,
+      "name": "Dr. Haolat Babalakin",
+      "specialty": "Child And Adolescent Psychiatry",
+      "state": "GA",
+      "region": "Southeast",
+      "patientCount": 188,
+      "decile": 10,
+      "hcoName": "JYDES FAMILY CLINIC LLC",
+      "referralCentrality": 0.0
+    },
+    {
+      "npi": 1942314604,
+      "name": "Dr. Syed Sattar",
+      "specialty": "Addiction Psychiatry",
+      "state": "NE",
+      "region": "Midwest",
+      "patientCount": 187,
+      "decile": 10,
+      "hcoName": "INROADS TO RECOVERY INC",
+      "referralCentrality": 0.0
+    },
+    {
+      "npi": 1215404413,
+      "name": "Dr. Abraham Kimeli",
+      "specialty": "Psychiatric/Mental Health",
+      "state": "MI",
+      "region": "Midwest",
+      "patientCount": 184,
+      "decile": 10,
+      "hcoName": "STATE STREET BEHAVIORAL SERVICES",
+      "referralCentrality": 0.0
+    },
+    {
+      "npi": 1750791281,
+      "name": "Dr. Durim Bozhdaraj",
+      "specialty": "Psychiatry",
+      "state": "FL",
+      "region": "Southeast",
+      "patientCount": 179,
+      "decile": 10,
+      "hcoName": "TLC RECOVERY CENTER OF S FLORIDA LLC",
+      "referralCentrality": 0.0
+    },
+    {
+      "npi": 1508068685,
+      "name": "Dr. Hetal Patel",
+      "specialty": "Psychiatry",
+      "state": "MI",
+      "region": "Midwest",
+      "patientCount": 177,
+      "decile": 10,
+      "hcoName": "PHC OF MICHIGAN LLC",
+      "referralCentrality": 0.0
+    },
+    {
+      "npi": 1699087148,
+      "name": "Dr. Priyadarshan Bajpayi",
+      "specialty": "Child And Adolescent Psychiatry",
+      "state": "NY",
+      "region": "Northeast",
+      "patientCount": 175,
+      "decile": 10,
+      "hcoName": "PRIYADARSHAN BAJPAYI MD PC",
+      "referralCentrality": 0.0
+    },
+    {
+      "npi": 1487015475,
+      "name": "Dr. Tierra Page",
+      "specialty": "Psychiatric/Mental Health",
+      "state": "—",
+      "region": "National",
+      "patientCount": 173,
+      "decile": 10,
+      "hcoName": "Unknown",
+      "referralCentrality": 0.0
+    },
+    {
+      "npi": 1194791392,
+      "name": "Dr. Ajith Potluri",
+      "specialty": "Geriatric Psychiatry",
+      "state": "FL",
+      "region": "Southeast",
+      "patientCount": 160,
+      "decile": 10,
+      "hcoName": "PSYCHIATRIC CONSULTANTS OF CENTRAL FLORIDA LLC",
+      "referralCentrality": 0.0
+    },
+    {
+      "npi": 1548375058,
+      "name": "Dr. Olaniyi Osuntokun",
+      "specialty": "Psychiatry",
+      "state": "—",
+      "region": "National",
+      "patientCount": 160,
+      "decile": 10,
+      "hcoName": "Unknown",
+      "referralCentrality": 0.0
+    },
+    {
+      "npi": 1245525781,
+      "name": "Dr. Babur Bhatti",
+      "specialty": "Geriatric Psychiatry",
+      "state": "—",
+      "region": "National",
+      "patientCount": 159,
+      "decile": 10,
+      "hcoName": "Unknown",
+      "referralCentrality": 0.0
+    },
+    {
+      "npi": 1174814594,
+      "name": "Dr. Pedram Amani",
+      "specialty": "Psychiatry",
+      "state": "AZ",
+      "region": "Southwest",
+      "patientCount": 158,
+      "decile": 10,
+      "hcoName": "COPPER SPRINGS HOSPITAL LLC",
+      "referralCentrality": 0.0
+    },
+    {
+      "npi": 1851597793,
+      "name": "Dr. Ajinder Dhatt",
+      "specialty": "Psychiatry",
+      "state": "TX",
+      "region": "Southwest",
+      "patientCount": 158,
+      "decile": 10,
+      "hcoName": "TEXAS CYPRESS CREEK HOSPITAL LP",
+      "referralCentrality": 0.0
+    }
+  ],
+  "saturation": [
+    {
+      "key": "CA",
+      "dimension": "state",
+      "trials": 147,
+      "investigators": 109,
+      "competingDensity": 1.0,
+      "overCommitted": 10
+    },
+    {
+      "key": "TX",
+      "dimension": "state",
+      "trials": 110,
+      "investigators": 92,
+      "competingDensity": 0.748,
+      "overCommitted": 7
+    },
+    {
+      "key": "FL",
+      "dimension": "state",
+      "trials": 85,
+      "investigators": 75,
+      "competingDensity": 0.578,
+      "overCommitted": 7
+    },
+    {
+      "key": "MI",
+      "dimension": "state",
+      "trials": 85,
+      "investigators": 53,
+      "competingDensity": 0.578,
+      "overCommitted": 4
+    },
+    {
+      "key": "NY",
+      "dimension": "state",
+      "trials": 71,
+      "investigators": 57,
+      "competingDensity": 0.483,
+      "overCommitted": 1
+    },
+    {
+      "key": "OH",
+      "dimension": "state",
+      "trials": 66,
+      "investigators": 59,
+      "competingDensity": 0.449,
+      "overCommitted": 0
+    },
+    {
+      "key": "MA",
+      "dimension": "state",
+      "trials": 51,
+      "investigators": 37,
+      "competingDensity": 0.347,
+      "overCommitted": 1
+    },
+    {
+      "key": "PA",
+      "dimension": "state",
+      "trials": 43,
+      "investigators": 34,
+      "competingDensity": 0.293,
+      "overCommitted": 1
+    },
+    {
+      "key": "SC",
+      "dimension": "state",
+      "trials": 43,
+      "investigators": 31,
+      "competingDensity": 0.293,
+      "overCommitted": 2
+    },
+    {
+      "key": "NC",
+      "dimension": "state",
+      "trials": 34,
+      "investigators": 24,
+      "competingDensity": 0.231,
+      "overCommitted": 1
+    },
+    {
+      "key": "VA",
+      "dimension": "state",
+      "trials": 34,
+      "investigators": 30,
+      "competingDensity": 0.231,
+      "overCommitted": 0
+    },
+    {
+      "key": "IL",
+      "dimension": "state",
+      "trials": 33,
+      "investigators": 26,
+      "competingDensity": 0.224,
+      "overCommitted": 0
+    },
+    {
+      "key": "IA",
+      "dimension": "state",
+      "trials": 31,
+      "investigators": 4,
+      "competingDensity": 0.211,
+      "overCommitted": 1
+    },
+    {
+      "key": "WA",
+      "dimension": "state",
+      "trials": 30,
+      "investigators": 18,
+      "competingDensity": 0.204,
+      "overCommitted": 2
+    },
+    {
+      "key": "UT",
+      "dimension": "state",
+      "trials": 29,
+      "investigators": 17,
+      "competingDensity": 0.197,
+      "overCommitted": 2
+    },
+    {
+      "key": "GA",
+      "dimension": "state",
+      "trials": 27,
+      "investigators": 23,
+      "competingDensity": 0.184,
+      "overCommitted": 0
+    },
+    {
+      "key": "LA",
+      "dimension": "state",
+      "trials": 25,
+      "investigators": 25,
+      "competingDensity": 0.17,
+      "overCommitted": 0
+    },
+    {
+      "key": "AZ",
+      "dimension": "state",
+      "trials": 23,
+      "investigators": 12,
+      "competingDensity": 0.156,
+      "overCommitted": 2
+    },
+    {
+      "key": "NJ",
+      "dimension": "state",
+      "trials": 21,
+      "investigators": 12,
+      "competingDensity": 0.143,
+      "overCommitted": 1
+    },
+    {
+      "key": "MD",
+      "dimension": "state",
+      "trials": 19,
+      "investigators": 13,
+      "competingDensity": 0.129,
+      "overCommitted": 1
+    },
+    {
+      "key": "DC",
+      "dimension": "state",
+      "trials": 18,
+      "investigators": 14,
+      "competingDensity": 0.122,
+      "overCommitted": 0
+    },
+    {
+      "key": "KY",
+      "dimension": "state",
+      "trials": 18,
+      "investigators": 10,
+      "competingDensity": 0.122,
+      "overCommitted": 1
+    },
+    {
+      "key": "AL",
+      "dimension": "state",
+      "trials": 17,
+      "investigators": 12,
+      "competingDensity": 0.116,
+      "overCommitted": 0
+    },
+    {
+      "key": "MO",
+      "dimension": "state",
+      "trials": 14,
+      "investigators": 12,
+      "competingDensity": 0.095,
+      "overCommitted": 0
+    },
+    {
+      "key": "OK",
+      "dimension": "state",
+      "trials": 13,
+      "investigators": 8,
+      "competingDensity": 0.088,
+      "overCommitted": 1
+    },
+    {
+      "key": "IN",
+      "dimension": "state",
+      "trials": 13,
+      "investigators": 15,
+      "competingDensity": 0.088,
+      "overCommitted": 0
+    },
+    {
+      "key": "CO",
+      "dimension": "state",
+      "trials": 13,
+      "investigators": 9,
+      "competingDensity": 0.088,
+      "overCommitted": 0
+    },
+    {
+      "key": "NH",
+      "dimension": "state",
+      "trials": 12,
+      "investigators": 11,
+      "competingDensity": 0.082,
+      "overCommitted": 0
+    },
+    {
+      "key": "MS",
+      "dimension": "state",
+      "trials": 12,
+      "investigators": 6,
+      "competingDensity": 0.082,
+      "overCommitted": 1
+    },
+    {
+      "key": "CT",
+      "dimension": "state",
+      "trials": 11,
+      "investigators": 8,
+      "competingDensity": 0.075,
+      "overCommitted": 1
+    },
+    {
+      "key": "ME",
+      "dimension": "state",
+      "trials": 11,
+      "investigators": 10,
+      "competingDensity": 0.075,
+      "overCommitted": 0
+    },
+    {
+      "key": "NV",
+      "dimension": "state",
+      "trials": 11,
+      "investigators": 8,
+      "competingDensity": 0.075,
+      "overCommitted": 1
+    },
+    {
+      "key": "WI",
+      "dimension": "state",
+      "trials": 10,
+      "investigators": 7,
+      "competingDensity": 0.068,
+      "overCommitted": 0
+    },
+    {
+      "key": "NE",
+      "dimension": "state",
+      "trials": 9,
+      "investigators": 7,
+      "competingDensity": 0.061,
+      "overCommitted": 0
+    },
+    {
+      "key": "OR",
+      "dimension": "state",
+      "trials": 7,
+      "investigators": 6,
+      "competingDensity": 0.048,
+      "overCommitted": 0
+    },
+    {
+      "key": "TN",
+      "dimension": "state",
+      "trials": 7,
+      "investigators": 6,
+      "competingDensity": 0.048,
+      "overCommitted": 0
+    },
+    {
+      "key": "NM",
+      "dimension": "state",
+      "trials": 7,
+      "investigators": 5,
+      "competingDensity": 0.048,
+      "overCommitted": 0
+    },
+    {
+      "key": "MN",
+      "dimension": "state",
+      "trials": 6,
+      "investigators": 7,
+      "competingDensity": 0.041,
+      "overCommitted": 0
+    },
+    {
+      "key": "WV",
+      "dimension": "state",
+      "trials": 6,
+      "investigators": 4,
+      "competingDensity": 0.041,
+      "overCommitted": 0
+    },
+    {
+      "key": "KS",
+      "dimension": "state",
+      "trials": 5,
+      "investigators": 5,
+      "competingDensity": 0.034,
+      "overCommitted": 0
+    },
+    {
+      "key": "AR",
+      "dimension": "state",
+      "trials": 5,
+      "investigators": 5,
+      "competingDensity": 0.034,
+      "overCommitted": 0
+    },
+    {
+      "key": "ID",
+      "dimension": "state",
+      "trials": 2,
+      "investigators": 2,
+      "competingDensity": 0.014,
+      "overCommitted": 0
+    },
+    {
+      "key": "DE",
+      "dimension": "state",
+      "trials": 1,
+      "investigators": 1,
+      "competingDensity": 0.007,
+      "overCommitted": 0
+    },
+    {
+      "key": "Unspecified",
+      "dimension": "condition",
+      "trials": 69,
+      "investigators": 0,
+      "competingDensity": 1.0,
+      "overCommitted": 0
+    },
+    {
+      "key": "Breast Neoplasms",
+      "dimension": "condition",
+      "trials": 21,
+      "investigators": 0,
+      "competingDensity": 0.304,
+      "overCommitted": 0
+    },
+    {
+      "key": "Depression",
+      "dimension": "condition",
+      "trials": 17,
+      "investigators": 0,
+      "competingDensity": 0.246,
+      "overCommitted": 0
+    },
+    {
+      "key": "Opioid-Related Disorders",
+      "dimension": "condition",
+      "trials": 16,
+      "investigators": 0,
+      "competingDensity": 0.232,
+      "overCommitted": 0
+    },
+    {
+      "key": "Neoplasms",
+      "dimension": "condition",
+      "trials": 16,
+      "investigators": 0,
+      "competingDensity": 0.232,
+      "overCommitted": 0
+    },
+    {
+      "key": "Alzheimer Disease",
+      "dimension": "condition",
+      "trials": 13,
+      "investigators": 0,
+      "competingDensity": 0.188,
+      "overCommitted": 0
+    },
+    {
+      "key": "COVID-19",
+      "dimension": "condition",
+      "trials": 13,
+      "investigators": 0,
+      "competingDensity": 0.188,
+      "overCommitted": 0
+    },
+    {
+      "key": "Substance-Related Disorders",
+      "dimension": "condition",
+      "trials": 13,
+      "investigators": 0,
+      "competingDensity": 0.188,
+      "overCommitted": 0
+    },
+    {
+      "key": "Heart Failure",
+      "dimension": "condition",
+      "trials": 12,
+      "investigators": 0,
+      "competingDensity": 0.174,
+      "overCommitted": 0
+    },
+    {
+      "key": "Depressive Disorder",
+      "dimension": "condition",
+      "trials": 12,
+      "investigators": 0,
+      "competingDensity": 0.174,
+      "overCommitted": 0
+    }
+  ],
+  "whitespace": [
+    {
+      "state": "TX",
+      "region": "Southwest",
+      "patientDensity": 33940,
+      "siteCount": 2,
+      "hasSite": true,
+      "diversityIndex": 0.483,
+      "whitespaceScore": 0.3
+    },
+    {
+      "state": "CA",
+      "region": "West",
+      "patientDensity": 33464,
+      "siteCount": 8,
+      "hasSite": true,
+      "diversityIndex": 0.534,
+      "whitespaceScore": 0.296
+    },
+    {
+      "state": "FL",
+      "region": "Southeast",
+      "patientDensity": 27954,
+      "siteCount": 4,
+      "hasSite": true,
+      "diversityIndex": 0.458,
+      "whitespaceScore": 0.247
+    },
+    {
+      "state": "OH",
+      "region": "Midwest",
+      "patientDensity": 22262,
+      "siteCount": 1,
+      "hasSite": true,
+      "diversityIndex": 0.24,
+      "whitespaceScore": 0.197
+    },
+    {
+      "state": "MI",
+      "region": "Midwest",
+      "patientDensity": 21123,
+      "siteCount": 1,
+      "hasSite": true,
+      "diversityIndex": 0.236,
+      "whitespaceScore": 0.187
+    },
+    {
+      "state": "NY",
+      "region": "Northeast",
+      "patientDensity": 19103,
+      "siteCount": 1,
+      "hasSite": true,
+      "diversityIndex": 0.417,
+      "whitespaceScore": 0.169
+    },
+    {
+      "state": "PA",
+      "region": "Northeast",
+      "patientDensity": 18344,
+      "siteCount": 1,
+      "hasSite": true,
+      "diversityIndex": 0.234,
+      "whitespaceScore": 0.162
+    },
+    {
+      "state": "VA",
+      "region": "Southeast",
+      "patientDensity": 14903,
+      "siteCount": 0,
+      "hasSite": false,
+      "diversityIndex": 0.445,
+      "whitespaceScore": 0.439
+    },
+    {
+      "state": "LA",
+      "region": "Southeast",
+      "patientDensity": 14299,
+      "siteCount": 0,
+      "hasSite": false,
+      "diversityIndex": 0.39,
+      "whitespaceScore": 0.421
+    },
+    {
+      "state": "NC",
+      "region": "Southeast",
+      "patientDensity": 14219,
+      "siteCount": 0,
+      "hasSite": false,
+      "diversityIndex": 0.297,
+      "whitespaceScore": 0.419
+    },
+    {
+      "state": "IL",
+      "region": "Midwest",
+      "patientDensity": 13708,
+      "siteCount": 1,
+      "hasSite": true,
+      "diversityIndex": 0.361,
+      "whitespaceScore": 0.121
+    },
+    {
+      "state": "AZ",
+      "region": "Southwest",
+      "patientDensity": 13032,
+      "siteCount": 0,
+      "hasSite": false,
+      "diversityIndex": 0.358,
+      "whitespaceScore": 0.384
+    },
+    {
+      "state": "MA",
+      "region": "Northeast",
+      "patientDensity": 12600,
+      "siteCount": 0,
+      "hasSite": false,
+      "diversityIndex": 0.33,
+      "whitespaceScore": 0.371
+    },
+    {
+      "state": "GA",
+      "region": "Southeast",
+      "patientDensity": 12426,
+      "siteCount": 2,
+      "hasSite": true,
+      "diversityIndex": 0.386,
+      "whitespaceScore": 0.11
+    },
+    {
+      "state": "KY",
+      "region": "Southeast",
+      "patientDensity": 11892,
+      "siteCount": 0,
+      "hasSite": false,
+      "diversityIndex": 0.146,
+      "whitespaceScore": 0.35
+    },
+    {
+      "state": "NJ",
+      "region": "Northeast",
+      "patientDensity": 10981,
+      "siteCount": 0,
+      "hasSite": false,
+      "diversityIndex": 0.402,
+      "whitespaceScore": 0.324
+    },
+    {
+      "state": "WA",
+      "region": "West",
+      "patientDensity": 9815,
+      "siteCount": 1,
+      "hasSite": true,
+      "diversityIndex": 0.264,
+      "whitespaceScore": 0.087
+    },
+    {
+      "state": "WI",
+      "region": "Midwest",
+      "patientDensity": 9808,
+      "siteCount": 0,
+      "hasSite": false,
+      "diversityIndex": 0.235,
+      "whitespaceScore": 0.289
+    },
+    {
+      "state": "MD",
+      "region": "Southeast",
+      "patientDensity": 9545,
+      "siteCount": 0,
+      "hasSite": false,
+      "diversityIndex": 0.488,
+      "whitespaceScore": 0.281
+    },
+    {
+      "state": "IN",
+      "region": "Midwest",
+      "patientDensity": 9483,
+      "siteCount": 0,
+      "hasSite": false,
+      "diversityIndex": 0.172,
+      "whitespaceScore": 0.279
+    },
+    {
+      "state": "TN",
+      "region": "Southeast",
+      "patientDensity": 9418,
+      "siteCount": 0,
+      "hasSite": false,
+      "diversityIndex": 0.182,
+      "whitespaceScore": 0.277
+    },
+    {
+      "state": "MO",
+      "region": "Midwest",
+      "patientDensity": 7927,
+      "siteCount": 1,
+      "hasSite": true,
+      "diversityIndex": 0.194,
+      "whitespaceScore": 0.07
+    },
+    {
+      "state": "OR",
+      "region": "West",
+      "patientDensity": 6756,
+      "siteCount": 0,
+      "hasSite": false,
+      "diversityIndex": 0.187,
+      "whitespaceScore": 0.199
+    },
+    {
+      "state": "SC",
+      "region": "Southeast",
+      "patientDensity": 5676,
+      "siteCount": 0,
+      "hasSite": false,
+      "diversityIndex": 0.268,
+      "whitespaceScore": 0.167
+    },
+    {
+      "state": "MN",
+      "region": "Midwest",
+      "patientDensity": 5575,
+      "siteCount": 0,
+      "hasSite": false,
+      "diversityIndex": 0.203,
+      "whitespaceScore": 0.164
+    },
+    {
+      "state": "OK",
+      "region": "Southwest",
+      "patientDensity": 5448,
+      "siteCount": 0,
+      "hasSite": false,
+      "diversityIndex": 0.2,
+      "whitespaceScore": 0.161
+    },
+    {
+      "state": "CO",
+      "region": "West",
+      "patientDensity": 5229,
+      "siteCount": 0,
+      "hasSite": false,
+      "diversityIndex": 0.264,
+      "whitespaceScore": 0.154
+    },
+    {
+      "state": "NV",
+      "region": "West",
+      "patientDensity": 5159,
+      "siteCount": 1,
+      "hasSite": true,
+      "diversityIndex": 0.446,
+      "whitespaceScore": 0.046
+    },
+    {
+      "state": "CT",
+      "region": "Northeast",
+      "patientDensity": 5094,
+      "siteCount": 0,
+      "hasSite": false,
+      "diversityIndex": 0.364,
+      "whitespaceScore": 0.15
+    },
+    {
+      "state": "UT",
+      "region": "West",
+      "patientDensity": 4074,
+      "siteCount": 0,
+      "hasSite": false,
+      "diversityIndex": 0.186,
+      "whitespaceScore": 0.12
+    },
+    {
+      "state": "WV",
+      "region": "Southeast",
+      "patientDensity": 3955,
+      "siteCount": 0,
+      "hasSite": false,
+      "diversityIndex": 0.1,
+      "whitespaceScore": 0.117
+    },
+    {
+      "state": "AL",
+      "region": "Southeast",
+      "patientDensity": 3952,
+      "siteCount": 0,
+      "hasSite": false,
+      "diversityIndex": 0.224,
+      "whitespaceScore": 0.116
+    },
+    {
+      "state": "IA",
+      "region": "Midwest",
+      "patientDensity": 3938,
+      "siteCount": 0,
+      "hasSite": false,
+      "diversityIndex": 0.176,
+      "whitespaceScore": 0.116
+    },
+    {
+      "state": "AR",
+      "region": "Southeast",
+      "patientDensity": 3695,
+      "siteCount": 2,
+      "hasSite": true,
+      "diversityIndex": 0.252,
+      "whitespaceScore": 0.033
+    },
+    {
+      "state": "MS",
+      "region": "Southeast",
+      "patientDensity": 3343,
+      "siteCount": 0,
+      "hasSite": false,
+      "diversityIndex": 0.33,
+      "whitespaceScore": 0.098
+    },
+    {
+      "state": "KS",
+      "region": "Midwest",
+      "patientDensity": 3278,
+      "siteCount": 0,
+      "hasSite": false,
+      "diversityIndex": 0.201,
+      "whitespaceScore": 0.097
+    },
+    {
+      "state": "NE",
+      "region": "Midwest",
+      "patientDensity": 3222,
+      "siteCount": 0,
+      "hasSite": false,
+      "diversityIndex": 0.17,
+      "whitespaceScore": 0.095
+    },
+    {
+      "state": "NM",
+      "region": "Southwest",
+      "patientDensity": 2855,
+      "siteCount": 0,
+      "hasSite": false,
+      "diversityIndex": 0.429,
+      "whitespaceScore": 0.084
+    },
+    {
+      "state": "ID",
+      "region": "West",
+      "patientDensity": 2837,
+      "siteCount": 0,
+      "hasSite": false,
+      "diversityIndex": 0.132,
+      "whitespaceScore": 0.084
+    },
+    {
+      "state": "NH",
+      "region": "Northeast",
+      "patientDensity": 2089,
+      "siteCount": 0,
+      "hasSite": false,
+      "diversityIndex": 0.105,
+      "whitespaceScore": 0.062
+    },
+    {
+      "state": "ME",
+      "region": "Northeast",
+      "patientDensity": 1928,
+      "siteCount": 0,
+      "hasSite": false,
+      "diversityIndex": 0.083,
+      "whitespaceScore": 0.057
+    },
+    {
+      "state": "DE",
+      "region": "Southeast",
+      "patientDensity": 1703,
+      "siteCount": 0,
+      "hasSite": false,
+      "diversityIndex": 0.365,
+      "whitespaceScore": 0.05
+    },
+    {
+      "state": "RI",
+      "region": "Northeast",
+      "patientDensity": 1126,
+      "siteCount": 0,
+      "hasSite": false,
+      "diversityIndex": 0.27,
+      "whitespaceScore": 0.033
+    },
+    {
+      "state": "DC",
+      "region": "Southeast",
+      "patientDensity": 1059,
+      "siteCount": 0,
+      "hasSite": false,
+      "diversityIndex": 0.879,
+      "whitespaceScore": 0.031
+    },
+    {
+      "state": "MT",
+      "region": "West",
+      "patientDensity": 944,
+      "siteCount": 0,
+      "hasSite": false,
+      "diversityIndex": 0.11,
+      "whitespaceScore": 0.028
+    },
+    {
+      "state": "VT",
+      "region": "Northeast",
+      "patientDensity": 825,
+      "siteCount": 0,
+      "hasSite": false,
+      "diversityIndex": 0.067,
+      "whitespaceScore": 0.024
+    },
+    {
+      "state": "ND",
+      "region": "Midwest",
+      "patientDensity": 612,
+      "siteCount": 0,
+      "hasSite": false,
+      "diversityIndex": 0.127,
+      "whitespaceScore": 0.018
+    },
+    {
+      "state": "WY",
+      "region": "West",
+      "patientDensity": 568,
+      "siteCount": 0,
+      "hasSite": false,
+      "diversityIndex": 0.111,
+      "whitespaceScore": 0.017
+    },
+    {
+      "state": "SD",
+      "region": "Midwest",
+      "patientDensity": 497,
+      "siteCount": 0,
+      "hasSite": false,
+      "diversityIndex": 0.139,
+      "whitespaceScore": 0.015
+    },
+    {
+      "state": "HI",
+      "region": "West",
+      "patientDensity": 486,
+      "siteCount": 0,
+      "hasSite": false,
+      "diversityIndex": 0.553,
+      "whitespaceScore": 0.014
+    },
+    {
+      "state": "AK",
+      "region": "West",
+      "patientDensity": 474,
+      "siteCount": 0,
+      "hasSite": false,
+      "diversityIndex": 0.166,
+      "whitespaceScore": 0.014
+    }
+  ],
+  "distributions": {
+    "ageHistogram": [
+      {
+        "band": "18-24",
+        "lo": 18,
+        "hi": 24,
+        "count": 49235
+      },
+      {
+        "band": "25-44",
+        "lo": 25,
+        "hi": 44,
+        "count": 196095
+      },
+      {
+        "band": "45-64",
+        "lo": 45,
+        "hi": 64,
+        "count": 183080
+      },
+      {
+        "band": "65-88",
+        "lo": 65,
+        "hi": 88,
+        "count": 8369
+      }
+    ],
+    "genderSplit": {
+      "F": 0.6651,
+      "M": 0.3278,
+      "U": 0.0071
+    },
+    "payerMix": {
+      "MEDICAID": 0.3874,
+      "COMMERCIAL": 0.3804,
+      "MEDICARE": 0.2018,
+      "Unknown": 0.0278,
+      "VA": 0.0022,
+      "WORKERS COMPENSATION": 0.0004
+    },
+    "geoDemographics": {
+      "white": 0.5164,
+      "black": 0.1225,
+      "asian": 0.0207,
+      "hispanic": 0.1159,
+      "other": 0.0405,
+      "unknown": 0.184
+    }
+  }
+}

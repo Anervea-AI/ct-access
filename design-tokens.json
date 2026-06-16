@@ -1,0 +1,149 @@
+{
+  "$schema": "https://tr.designtokens.org/format/",
+  "$description": "Anervea warm-editorial design tokens (W3C DTCG format). Consumable by Figma Tokens Studio, Style Dictionary, etc.",
+  "color": {
+    "$type": "color",
+    "cream":          { "$value": "#faf5ee", "$description": "App background" },
+    "surface":        { "$value": "#ffffff", "$description": "Cards, top bar, popovers" },
+    "surfaceRaised":  { "$value": "#fffdfa", "$description": "Controls on cream" },
+    "panel":          { "$value": "#f3ede1", "$description": "Sidebar / left rail" },
+    "muted":          { "$value": "#f5efe4", "$description": "Subtle fills, table headers" },
+    "inset":          { "$value": "#f3ecdf", "$description": "Chips, code pills, mono cells" },
+    "hover":          { "$value": "#ece3d4", "$description": "Sidebar item hover" },
+    "border":         { "$value": "#e7dcc9", "$description": "Default hairline border" },
+    "borderStrong":   { "$value": "#d9c9ad", "$description": "Dashed/strong dividers" },
+
+    "primary":        { "$value": "#9a3412", "$description": "Primary buttons, headings, key figures" },
+    "primaryDeep":    { "$value": "#7c2d12", "$description": "Primary hover/pressed, deep gradient stop" },
+    "accent":         { "$value": "#c2410c", "$description": "Accent figures, active-nav border, referenced-by data" },
+    "accentStrong":   { "$value": "#b8430f", "$description": "Bright gradient stop" },
+    "gold":           { "$value": "#ffb74d", "$description": "Light-orange accent" },
+
+    "ink":            { "$value": "#2c2118", "$description": "Default text (warm near-black)" },
+    "inkPlain":       { "$value": "#0f1213", "$description": "Inputs, strong emphasis" },
+    "textMuted":      { "$value": "#6b7280" },
+    "textSubtle":     { "$value": "#94a3b8" },
+    "textFaint":      { "$value": "#9ca3af" },
+    "sidebarText":    { "$value": "#5b4a3a" },
+    "sidebarTextMuted": { "$value": "#6b5d4d" },
+    "sidebarTextFaint": { "$value": "#9c8b76" },
+
+    "status": {
+      "successText":  { "$value": "#166534" },
+      "successBg":    { "$value": "#dcfce7" },
+      "errorText":    { "$value": "#b91c1c" },
+      "errorBg":      { "$value": "#fef2f2" },
+      "warningText":  { "$value": "#92400e" },
+      "warningBg":    { "$value": "#fef3c7" },
+      "infoText":     { "$value": "#1d4ed8" },
+      "infoBg":       { "$value": "#eff6ff" }
+    },
+
+    "dataViz": {
+      "series1":      { "$value": "#c2410c" },
+      "series2":      { "$value": "#ffb74d" },
+      "series3":      { "$value": "#9a3412" },
+      "series4":      { "$value": "#7c2d12" },
+      "series5":      { "$value": "#6366f1" },
+      "series6":      { "$value": "#0891b2" },
+      "series7":      { "$value": "#ca8a04" },
+      "edgeReferences":   { "$value": "#2563eb", "$description": "Incoming reference edge" },
+      "edgeReferencedBy": { "$value": "#c2410c", "$description": "Outgoing reference edge" },
+      "gridline":     { "$value": "#f3ecdf" }
+    }
+  },
+
+  "font": {
+    "family": {
+      "$type": "fontFamily",
+      "display": { "$value": ["Fraunces", "Lora", "Georgia", "Times New Roman", "serif"] },
+      "body":    { "$value": ["Inter", "ui-sans-serif", "system-ui", "-apple-system", "sans-serif"] },
+      "mono":    { "$value": ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"] }
+    },
+    "weight": {
+      "$type": "fontWeight",
+      "regular":  { "$value": 400 },
+      "medium":   { "$value": 500 },
+      "semibold": { "$value": 600 },
+      "bold":     { "$value": 700 }
+    }
+  },
+
+  "fontSize": {
+    "$type": "dimension",
+    "displayLg": { "$value": "1.875rem", "$description": "30px — KPI numbers (serif 700)" },
+    "displayMd": { "$value": "1.5rem",   "$description": "24px — page titles (serif 700)" },
+    "heading":   { "$value": "1rem",     "$description": "16px — card/section headings" },
+    "label":     { "$value": "0.875rem", "$description": "14px — section labels (uppercase 600)" },
+    "body":      { "$value": "0.875rem", "$description": "14px — default body" },
+    "small":     { "$value": "0.75rem",  "$description": "12px — secondary, table cells" },
+    "micro":     { "$value": "0.6875rem","$description": "11px — chips, badges" },
+    "nano":      { "$value": "0.625rem", "$description": "10px — tiny uppercase tags" }
+  },
+
+  "lineHeight": {
+    "$type": "number",
+    "tight":   { "$value": 1.15 },
+    "snug":    { "$value": 1.35 },
+    "normal":  { "$value": 1.5 },
+    "relaxed": { "$value": 1.625 }
+  },
+
+  "letterSpacing": {
+    "$type": "dimension",
+    "tightHeading": { "$value": "-0.2px" },
+    "wide":         { "$value": "0.025em" },
+    "widest":       { "$value": "0.1em" }
+  },
+
+  "spacing": {
+    "$type": "dimension",
+    "0_5": { "$value": "2px" },
+    "1":   { "$value": "4px" },
+    "1_5": { "$value": "6px" },
+    "2":   { "$value": "8px" },
+    "2_5": { "$value": "10px" },
+    "3":   { "$value": "12px" },
+    "4":   { "$value": "16px" },
+    "5":   { "$value": "20px" },
+    "6":   { "$value": "24px" }
+  },
+
+  "radius": {
+    "$type": "dimension",
+    "sm":   { "$value": "4px" },
+    "md":   { "$value": "8px" },
+    "lg":   { "$value": "12px" },
+    "xl":   { "$value": "14px" },
+    "full": { "$value": "9999px" }
+  },
+
+  "borderWidth": {
+    "$type": "dimension",
+    "hairline": { "$value": "1px" },
+    "accent":   { "$value": "2px" }
+  },
+
+  "shadow": {
+    "$type": "shadow",
+    "sm":        { "$value": { "offsetX": "0", "offsetY": "1px", "blur": "2px",  "spread": "0",    "color": "rgba(0,0,0,0.05)" } },
+    "md":        { "$value": { "offsetX": "0", "offsetY": "4px", "blur": "6px",  "spread": "-1px", "color": "rgba(0,0,0,0.10)" } },
+    "pop":       { "$value": { "offsetX": "0", "offsetY": "6px", "blur": "24px", "spread": "0",    "color": "rgba(0,0,0,0.14)" } },
+    "node":      { "$value": { "offsetX": "0", "offsetY": "3px", "blur": "14px", "spread": "0",    "color": "rgba(0,0,0,0.20)" } },
+    "nodeHover": { "$value": { "offsetX": "0", "offsetY": "10px","blur": "32px", "spread": "0",    "color": "rgba(0,0,0,0.28)" } }
+  },
+
+  "motion": {
+    "duration": {
+      "$type": "duration",
+      "fast": { "$value": "150ms" },
+      "base": { "$value": "200ms" },
+      "viewFit": { "$value": "450ms" }
+    },
+    "easing": {
+      "$type": "cubicBezier",
+      "standard": { "$value": [0.4, 0, 0.2, 1] },
+      "spring":   { "$value": [0.34, 1.56, 0.64, 1] }
+    }
+  }
+}

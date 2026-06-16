@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AlfaDev — Layout mocks chooser</title>
+<link rel="stylesheet" href="_base.css" />
+<style>
+  .page { max-width: 1200px; margin: 0 auto; padding: 32px 24px 64px; }
+  h1.title { font-family: var(--font-display); font-weight: 700; font-size: 30px; margin: 0 0 6px; }
+  .lead { color: var(--text-muted); max-width: 60rem; margin: 0 0 28px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  .moc { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; }
+  .moc .frame { position: relative; height: 360px; border-bottom: 1px solid var(--border); overflow: hidden; background: var(--cream); }
+  .moc .frame iframe { position: absolute; top: 0; left: 0; width: 1440px; height: 900px; border: 0; transform: scale(.5); transform-origin: top left; pointer-events: none; }
+  .moc .meta { padding: 16px 18px 18px; }
+  .moc .meta h2 { font-family: var(--font-display); font-weight: 700; font-size: 19px; margin: 0 0 4px; }
+  .moc .meta .num { color: var(--accent); font-weight: 700; }
+  .moc .meta p { color: var(--text-muted); font-size: 13px; margin: 6px 0 12px; }
+  .moc .meta ul { margin: 0 0 14px; padding-left: 18px; font-size: 13px; color: var(--text-muted); }
+  .moc .meta li { margin: 2px 0; }
+  .moc .meta .best { font-size: 12px; color: var(--ink); }
+  .moc .meta .best b { color: var(--primary); }
+  .open { display: inline-flex; align-items: center; gap: 8px; }
+  .tablehead { margin: 36px 0 10px; }
+  table.cmp { width: 100%; border-collapse: collapse; font-size: 13px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  table.cmp th, table.cmp td { padding: 10px 12px; text-align: left; border-top: 1px solid var(--inset); }
+  table.cmp th { background: var(--muted); color: var(--text-subtle); font-size: 10px; text-transform: uppercase; letter-spacing: .08em; border-top: 0; }
+  table.cmp td:first-child { font-weight: 600; color: var(--ink); }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="brand" style="margin-bottom:18px"><span class="brand-mark">A</span><span class="a">alfa</span><span class="d">dev</span></div>
+  <h1 class="title">Layout mocks — Site &amp; PI tab</h1>
+  <p class="lead">Four directions for better visibility &amp; space management. Each is a clickable, full-page HTML mock styled with the real warm-editorial tokens. Open any one full-screen, compare, and tell me which to build (or mix elements). The previews below are live, scaled-down iframes.</p>
+
+  <div class="grid">
+    <div class="moc">
+      <div class="frame"><iframe src="mock-1-focus-canvas.html" scrolling="no"></iframe></div>
+      <div class="meta">
+        <h2><span class="num">01 ·</span> Focus Canvas</h2>
+        <p>Modules collapse to an icon rail; filters live in a slide-over drawer. The map becomes a full-width hero.</p>
+        <ul><li>Maximum map / canvas area</li><li>Filters one click away, not always on screen</li><li>Cleanest, most “product” feel</li></ul>
+        <div class="best">Best when <b>the map is the main workspace</b> and filters are set once.</div>
+        <p><a class="open btn secondary" href="mock-1-focus-canvas.html" target="_blank">Open full screen →</a></p>
+      </div>
+    </div>
+
+    <div class="moc">
+      <div class="frame"><iframe src="mock-2-top-toolbar.html" scrolling="no"></iframe></div>
+      <div class="meta">
+        <h2><span class="num">02 ·</span> Top Toolbar</h2>
+        <p>The left filter column is removed; filters become a sticky horizontal toolbar of inline controls and popovers.</p>
+        <ul><li>Reclaims ~20rem width for content</li><li>Filters read left→right like a query</li><li>Familiar — closest to today’s layout</li></ul>
+        <div class="best">Best for <b>fast filter tweaking</b> with wide results tables and map side-by-side.</div>
+        <p><a class="open btn secondary" href="mock-2-top-toolbar.html" target="_blank">Open full screen →</a></p>
+      </div>
+    </div>
+
+    <div class="moc">
+      <div class="frame"><iframe src="mock-3-three-pane.html" scrolling="no"></iframe></div>
+      <div class="meta">
+        <h2><span class="num">03 ·</span> Three-Pane Workspace</h2>
+        <p>IDE-style: icon rail · filter accordion · center map · persistent right inspector that updates in place.</p>
+        <ul><li>Scorecard / HCP profile always visible</li><li>No scroll-jump when selecting</li><li>Most powerful for deep analysis</li></ul>
+        <div class="best">Best for <b>analysts who click site→HCP→profile</b> repeatedly and want context pinned.</div>
+        <p><a class="open btn secondary" href="mock-3-three-pane.html" target="_blank">Open full screen →</a></p>
+      </div>
+    </div>
+
+    <div class="moc">
+      <div class="frame"><iframe src="mock-4-tabbed-results.html" scrolling="no"></iframe></div>
+      <div class="meta">
+        <h2><span class="num">04 ·</span> Tabbed Results</h2>
+        <p>Compact filter chip bar + pinned map, then Leaderboard / Scorecard / Diversity / Insights / Shortlist as tabs.</p>
+        <ul><li>Kills the long vertical scroll</li><li>Smallest change from current build</li><li>Everything fits one screen</li></ul>
+        <div class="best">Best <b>lowest-risk upgrade</b> — keeps the current structure, just organizes it.</div>
+        <p><a class="open btn secondary" href="mock-4-tabbed-results.html" target="_blank">Open full screen →</a></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="tablehead seclbl">At a glance</div>
+  <table class="cmp">
+    <thead><tr><th>Concept</th><th>Frees space by…</th><th>Trade-off</th><th>Effort to build</th></tr></thead>
+    <tbody>
+      <tr><td>01 Focus Canvas</td><td>Hiding both rails on demand</td><td>Filters not always visible</td><td>Medium</td></tr>
+      <tr><td>02 Top Toolbar</td><td>Removing the left filter column</td><td>Many filters get cramped horizontally</td><td>Medium</td></tr>
+      <tr><td>03 Three-Pane</td><td>Docking inspector, no modals/scroll</td><td>Needs ≥1440px width to feel roomy</td><td>High</td></tr>
+      <tr><td>04 Tabbed Results</td><td>Stacking results into tabs</td><td>Can’t see two result panels at once</td><td>Low</td></tr>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>

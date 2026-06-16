@@ -1,0 +1,106 @@
+{
+  "funnel": {
+    "eligiblePool": 36432,
+    "biggestConstraintId": "inc_current_mde",
+    "steps": [
+      {
+        "criterionId": "dx_bipolar1",
+        "remaining": 437375,
+        "removed": 0,
+        "reductionPct": 0.0
+      },
+      {
+        "criterionId": "inc_current_mde",
+        "remaining": 196819,
+        "removed": 240556,
+        "reductionPct": 55.0
+      },
+      {
+        "criterionId": "inc_age",
+        "remaining": 193990,
+        "removed": 2828,
+        "reductionPct": 1.4
+      },
+      {
+        "criterionId": "inc_severity",
+        "remaining": 114454,
+        "removed": 79536,
+        "reductionPct": 41.0
+      },
+      {
+        "criterionId": "inc_treatment_stable",
+        "remaining": 85841,
+        "removed": 28614,
+        "reductionPct": 25.0
+      },
+      {
+        "criterionId": "exc_psychosis",
+        "remaining": 77257,
+        "removed": 8584,
+        "reductionPct": 10.0
+      },
+      {
+        "criterionId": "exc_substance",
+        "remaining": 63350,
+        "removed": 13906,
+        "reductionPct": 18.0
+      },
+      {
+        "criterionId": "exc_suicidality",
+        "remaining": 58282,
+        "removed": 5068,
+        "reductionPct": 8.0
+      },
+      {
+        "criterionId": "exc_antipsychotic_washout",
+        "remaining": 40798,
+        "removed": 17485,
+        "reductionPct": 30.0
+      },
+      {
+        "criterionId": "exc_renal_hepatic",
+        "remaining": 38350,
+        "removed": 2448,
+        "reductionPct": 6.0
+      },
+      {
+        "criterionId": "exc_recent_trial",
+        "remaining": 36432,
+        "removed": 1917,
+        "reductionPct": 5.0
+      }
+    ]
+  },
+  "sitesTop5": [
+    {
+      "id": "site_022",
+      "eligiblePatients": 278,
+      "score": 0.63
+    },
+    {
+      "id": "site_024",
+      "eligiblePatients": 212,
+      "score": 0.63
+    },
+    {
+      "id": "site_025",
+      "eligiblePatients": 212,
+      "score": 0.63
+    },
+    {
+      "id": "site_018",
+      "eligiblePatients": 264,
+      "score": 0.55
+    },
+    {
+      "id": "site_021",
+      "eligiblePatients": 239,
+      "score": 0.53
+    }
+  ],
+  "forecastBase": {
+    "lpiDate": "2027-06",
+    "onTrack": true,
+    "sitesNeededForTarget": 19
+  }
+}

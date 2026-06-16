@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mock 1 · Focus Canvas — AlfaDev layout</title>
+<link rel="stylesheet" href="_base.css" />
+<style>
+  .drawer { width: 300px; flex: none; background: var(--surface); border-right: 1px solid var(--border); overflow-y: auto; padding: 18px; box-shadow: var(--shadow-md); }
+  .drawer .dh { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .grid2 { display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- top bar -->
+  <div class="topbar">
+    <div class="brand"><span class="brand-mark">A</span><span class="a">alfa</span><span class="d">dev</span></div>
+    <div class="prog">Bipolar I Depression (US) — RWD-backed</div>
+    <div class="spacer"></div>
+    <span class="badge primary">Real RWD</span>
+    <span class="badge success">LLM: gpt-5.2</span>
+    <button class="btn primary">💬 Assistant</button>
+  </div>
+
+  <div class="body">
+    <!-- collapsed icon-only module rail -->
+    <nav class="nav rail">
+      <div class="navhead"><button class="iconbtn" title="Expand">▣</button></div>
+      <a class="navitem active" title="Site &amp; PI"><span class="ico">📍</span></a>
+      <a class="navitem" title="Feasibility"><span class="ico">▽</span></a>
+      <a class="navitem" title="Enrollment"><span class="ico">📈</span></a>
+      <a class="navitem" title="KOL Mapping"><span class="ico">🕸</span></a>
+      <a class="navitem" title="Monitoring"><span class="ico">📊</span></a>
+      <a class="navitem" title="Population"><span class="ico">▤</span></a>
+    </nav>
+
+    <!-- filters as a slide-over drawer (shown open) -->
+    <aside class="drawer">
+      <div class="dh"><span class="seclbl">Filters &amp; weights</span><button class="iconbtn">✕</button></div>
+      <div class="filters">
+        <div class="grp">
+          <div class="caps" style="margin-bottom:8px">Catchment &amp; supply</div>
+          <div class="row"><span class="muted" style="font-size:12px">Catchment radius</span><span class="mono" style="font-size:12px;color:var(--primary);font-weight:600">50 mi</span></div>
+          <div class="slider mid"></div>
+          <div class="row" style="margin-top:10px"><span class="muted" style="font-size:12px">Min eligible patients</span><span class="mono" style="font-size:12px;color:var(--primary);font-weight:600">0</span></div>
+          <div class="slider lo"></div>
+          <div class="row" style="margin-top:10px"><span class="muted" style="font-size:12px">PI experience (min trials)</span><span class="mono" style="font-size:12px;color:var(--primary);font-weight:600">0</span></div>
+          <div class="slider lo"></div>
+        </div>
+        <div class="grp">
+          <div class="caps" style="margin-bottom:8px">Regions</div>
+          <div class="chips"><span class="chip">Northeast</span><span class="chip">Southeast</span><span class="chip">Midwest</span><span class="chip">Southwest</span><span class="chip">West</span></div>
+        </div>
+        <div class="grp">
+          <div class="caps" style="margin-bottom:8px">Specialties</div>
+          <div class="chips"><span class="chip on">Psychiatry</span><span class="chip">Neurology</span><span class="chip">Primary Care</span><span class="chip">Research Center</span></div>
+        </div>
+        <div class="grp">
+          <div class="caps" style="margin-bottom:8px">Diversity targets</div>
+          <div class="row"><span class="muted" style="font-size:12px">Black representation</span><span class="mono" style="font-size:12px;color:var(--primary)">0%</span></div>
+          <div class="slider lo"></div>
+          <div class="row" style="margin-top:10px"><span class="muted" style="font-size:12px">Hispanic representation</span><span class="mono" style="font-size:12px;color:var(--primary)">0%</span></div>
+          <div class="slider lo"></div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="wrap wide">
+        <div class="note"><span class="tag">MOCK 1</span><b>Focus Canvas.</b> Modules collapse to an <b>icon rail</b>; filters live in a <b>slide-over drawer</b> (toggle with the “Filters” button). The map becomes a full-width hero — best when the map is the primary workspace. Filters are out of the way but one click away.</div>
+
+        <div class="mhead">
+          <div>
+            <div style="display:flex;gap:8px;align-items:center"><span class="mono faint" style="font-size:12px">Module 01</span><span class="badge primary">Demo</span></div>
+            <h1>Site &amp; PI identification</h1>
+            <p>Where should we run, and which PIs can deliver? Tune catchment, supply and diversity — the map, leaderboard and representativeness recompute live.</p>
+          </div>
+          <div class="acts">
+            <button class="btn ghost">⌗ Filters</button>
+            <button class="btn secondary">↓ CSV</button>
+          </div>
+        </div>
+
+        <div class="kpis" style="margin-bottom:16px">
+          <div class="kpi"><div class="lbl">Eligible pool</div><div class="val">42,762</div><div class="sub">from feasibility cascade</div></div>
+          <div class="kpi b2"><div class="lbl">Sites matching</div><div class="val">26</div><div class="sub">26 total</div></div>
+          <div class="kpi b3"><div class="lbl">Eligible across sites</div><div class="val">3,356</div></div>
+          <div class="kpi b4"><div class="lbl">Avg score</div><div class="val">0.31</div></div>
+        </div>
+
+        <div class="card" style="margin-bottom:16px">
+          <div class="ch"><span class="seclbl">Geographic footprint — sites, HCPs &amp; referral network</span><span class="pill"><span style="color:var(--gold)">●</span> HCPs on</span></div>
+          <div class="cb">
+            <div class="map" style="height:460px">
+              <div class="usa">United States · sites + HCP network</div>
+              <div class="zoom"><button>+</button><button>−</button></div>
+              <div class="maptools"><span class="pill on">⤢ Fit</span><span class="pill">Decile 7+ ▾</span></div>
+              <div class="maphint">Click a site → HCPs within 50 mi · click an HCP → referral network</div>
+              <div class="pin" style="left:30%;top:55%"><span>+</span></div>
+              <div class="pin" style="left:62%;top:40%"><span>+</span></div>
+              <div class="pin" style="left:74%;top:62%"><span>+</span></div>
+              <div class="dot ref" style="left:33%;top:48%"></div><div class="dot" style="left:28%;top:62%"></div>
+              <div class="dot ref" style="left:58%;top:34%"></div><div class="dot" style="left:66%;top:46%"></div>
+              <div class="dot" style="left:70%;top:56%"></div><div class="dot ref" style="left:78%;top:66%"></div>
+            </div>
+            <div class="legend" style="margin-top:12px"><span><span class="pin" style="position:static;display:inline-block;width:12px;height:12px;vertical-align:-1px"></span> Site</span><span><i style="background:var(--gold)"></i> HCP</span><span><i style="background:var(--gold);outline:2px dashed var(--edge-ref);outline-offset:1px"></i> Has referral connections</span></div>
+          </div>
+        </div>
+
+        <div class="grid2">
+          <div class="card">
+            <div class="ch"><span class="seclbl">Site leaderboard</span></div>
+            <div class="cb" style="padding-top:8px">
+              <table class="t">
+                <thead><tr><th>Site</th><th>State</th><th style="text-align:right">Eligible</th><th style="text-align:right">Score</th></tr></thead>
+                <tbody>
+                  <tr class="sel"><td class="name">Atlanta Neuropsych</td><td>GA</td><td class="num">312</td><td class="num">0.61</td></tr>
+                  <tr><td class="name">Houston BH Center</td><td>TX</td><td class="num">288</td><td class="num">0.54</td></tr>
+                  <tr><td class="name">Phoenix Mind Clinic</td><td>AZ</td><td class="num">241</td><td class="num">0.49</td></tr>
+                  <tr><td class="name">Tampa Research</td><td>FL</td><td class="num">205</td><td class="num">0.44</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card">
+            <div class="ch"><span class="seclbl">Site scorecard</span></div>
+            <div class="cb">
+              <div class="font-display" style="font-weight:700;font-size:16px">Atlanta Neuropsych</div>
+              <div class="muted" style="font-size:12px;margin-bottom:10px">Rank #1 · Southeast · GA</div>
+              <div class="bars">
+                <div class="bar"><span class="muted">Eligible</span><div class="track"><div class="fill" style="width:80%"></div></div><span class="mono">312</span></div>
+                <div class="bar"><span class="muted">PI trials</span><div class="track"><div class="fill" style="width:60%"></div></div><span class="mono">9</span></div>
+                <div class="bar"><span class="muted">Rx volume</span><div class="track"><div class="fill" style="width:72%"></div></div><span class="mono">4.1k</span></div>
+                <div class="bar"><span class="muted">Diversity fit</span><div class="track"><div class="fill" style="width:55%"></div></div><span class="mono">0.55</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+</body>
+</html>
