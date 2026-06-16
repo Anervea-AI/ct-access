@@ -187,7 +187,7 @@ export function SiteHcpMap({ sites, radiusMiles, regions, onSiteSelected, onHcpS
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 mt-2.5">
         <LegendDot color="#9a3412" label="Trial site" />
         <LegendDot color="#ffb74d" label="HCP" />
-        <LegendDot color="#2563eb" label="HCP with referral network" />
+        <LegendDot color="#ba7602" label="HCP with referral network" />
         <LegendDot color="#9a3412" label="Selected HCP (network center)" ring />
         <span className="inline-flex items-center gap-1.5 text-xs text-text-muted">
           <span className="inline-block w-5 border-t-2 border-dashed" style={{ borderColor: "#2563eb" }} />

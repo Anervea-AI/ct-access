@@ -32,8 +32,8 @@ function MapClickHandler({ onClear }: { onClear: () => void }) {
 // shows empty background, so a tiny/single-city cluster shouldn't zoom to street level.
 const MAX_FIT_ZOOM = 10;
 
-// Fit `bounds` but land one zoom step tighter than plain fitBounds (which tends to
-// sit a level too far out). plusOne=false keeps the looser overview fit (idle).
+// Fit `bounds`. plusOne=true lands one zoom step tighter than plain fitBounds; callers
+// pass false so site/HCP/overview fits use the plain fit (no extra +1 tightening).
 function flyFit(map: L.Map, bounds: L.LatLngBounds, plusOne = true) {
   if (!bounds.isValid()) return;
   const padded = bounds.pad(0.12);
@@ -51,11 +51,11 @@ function MapController({ mode, site, radiusMiles, network }: {
       const dLng = radiusMiles / (69 * Math.max(0.1, Math.cos((site.lat * Math.PI) / 180)));
       flyFit(map, L.latLngBounds(
         [site.lat - dLat, site.lng - dLng], [site.lat + dLat, site.lng + dLng],
-      ));
+      ), false);
     } else if (mode === "hcp" && network && network.nodes.length) {
       const pts = network.nodes.map((n) => [n.lat, n.lng] as [number, number]);
       if (pts.length === 1) map.flyTo(pts[0], 10, { duration: 0.6 });
-      else flyFit(map, L.latLngBounds(pts));
+      else flyFit(map, L.latLngBounds(pts), false);
     } else if (mode === "idle") {
       map.flyToBounds(US_BOUNDS, { duration: 0.6 });
     }
@@ -89,7 +89,7 @@ export function InteractiveMap(p: Props) {
     const map = mapRef.current;
     if (!map) return;
     const pts: [number, number][] = [];
-    let plusOne = true;
+    // No +1 tightening on any fit — plain fitBounds. (The idle overview never used it.)
     if (p.mode === "hcp") {
       for (const n of p.network?.nodes ?? []) pts.push([n.lat, n.lng]);
     } else if (p.mode === "site" && selectedSite) {
@@ -101,11 +101,10 @@ export function InteractiveMap(p: Props) {
     } else {
       for (const s of p.sites) pts.push([s.lat, s.lng]);
       for (const h of p.baseHcps) pts.push([h.lat, h.lng]);
-      plusOne = false; // idle: keep the wider overview
     }
     if (pts.length === 0) { map.flyToBounds(US_BOUNDS, { duration: 0.5 }); return; }
     if (pts.length === 1) { map.flyTo(pts[0], 10, { duration: 0.5 }); return; }
-    flyFit(map, L.latLngBounds(pts), plusOne);
+    flyFit(map, L.latLngBounds(pts), false);
   };
 
   return (

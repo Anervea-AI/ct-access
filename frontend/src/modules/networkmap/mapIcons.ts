@@ -24,15 +24,16 @@ export function siteIcon(dimmed = false): L.DivIcon {
   });
 }
 
-const REFERRAL = "#2563eb"; // matches the referral-edge color
+const HCP_REF = "#ba7602";        // deeper amber — a different shade of the gold HCP color
+const HCP_REF_STROKE = "#7c4f02"; // darker amber outline for referral HCPs
 
-// HCPs that participate in the referral graph are filled BLUE; ordinary HCPs stay gold.
-// (selection / network-center states still take visual priority.)
+// HCPs that participate in the referral graph use a deeper amber shade; ordinary HCPs
+// stay the lighter gold. (selection / network-center states still take visual priority.)
 export function hcpIcon(opts: { selected?: boolean; center?: boolean; hasReferrals?: boolean } = {}): L.DivIcon {
   const r = opts.center ? 9 : 6;
   const hasRef = !!opts.hasReferrals && !opts.center && !opts.selected;
-  const fill = opts.center ? CENTER : opts.selected ? HCP_SEL : hasRef ? REFERRAL : HCP;
-  const stroke = opts.center ? "#ffffff" : hasRef ? "#1e40af" : "#9a3412";
+  const fill = opts.center ? CENTER : opts.selected ? HCP_SEL : hasRef ? HCP_REF : HCP;
+  const stroke = opts.center ? "#ffffff" : hasRef ? HCP_REF_STROKE : "#9a3412";
   const size = (r + 3) * 2;
   const c = size / 2;
   return L.divIcon({
