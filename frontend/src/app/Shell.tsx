@@ -14,7 +14,7 @@ export function Shell({ children }: { children: ReactNode }) {
       <div className="flex flex-1 min-h-0">
         <Sidebar />
         <main className="flex-1 min-w-0 overflow-y-auto">
-          <div className="mx-auto max-w-[100rem] px-6 py-5 xl:px-8">{children}</div>
+          <div className="mx-auto max-w-[100rem] px-6 py-4 xl:px-8">{children}</div>
         </main>
         {open && !fullscreen && (
           <aside className="w-[26rem] shrink-0 border-l border-border bg-surface flex flex-col">

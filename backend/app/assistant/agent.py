@@ -24,24 +24,42 @@ RULES (non-negotiable):
 - Refuse anything requiring patient-identifiable data; all data is de-identified and
   aggregated. Flag low-confidence answers.
 - Cite the data source/proxy for material claims (the tools return this in 'audit').
-- Be concise: a short paragraph plus the relevant visual the tool returns.
+- Be concise and conversational: answer the user's ACTUAL question in a short paragraph,
+  then let the tool's visual carry the detail.
+- For what-if questions, call the matching tool and explain the before→after in plain
+  language: geographic what-ifs (don't recruit in / only run in a region) -> region_impact;
+  parameter/criterion changes -> criterion_impact; enrollment changes -> forecast_enrollment.
+- Be AGENTIC: decompose multi-part questions and call AS MANY tools as needed (in one turn
+  or across turns), then synthesize ONE coherent answer from all the results. Examples:
+  "if I drop the West, how does enrollment change?" -> region_impact AND forecast_enrollment;
+  "rank sites and tell me who the top KOLs there are" -> rank_sites AND rank_kols. Don't stop
+  at the first tool if the question has more parts.
+- Format the answer in clean Markdown (bold for key figures, bullet lists, tables when
+  comparing); use LaTeX ($...$) only for actual formulas.
 
 REGIONS: Northeast, Southeast, Midwest, Southwest, West.
 """
 
-MAX_TOOL_ROUNDS = 4
+MAX_TOOL_ROUNDS = 6
 
 
-def _aggregate(tool_results: list[dict]) -> tuple[dict | None, list[dict]]:
-    viz = None
+def _aggregate(tool_results: list[dict]) -> tuple[list[dict], list[dict]]:
+    """Collect EVERY tool's viz (deduped by type+title, capped) and all audit blocks,
+    so a multi-tool answer can show multiple charts/tables."""
+    vizzes: list[dict] = []
+    seen: set = set()
     audit: list[dict] = []
     for r in tool_results:
-        if viz is None and r.get("viz"):
-            viz = r["viz"]
+        v = r.get("viz")
+        if v:
+            key = (v.get("type"), str(v.get("title", "")))
+            if key not in seen:
+                seen.add(key)
+                vizzes.append(v)
         for a in r.get("audit", []):
             if a:
                 audit.append(a)
-    return viz, audit
+    return vizzes[:3], audit
 
 
 # --------------------------------------------------------------------------- #
@@ -114,8 +132,9 @@ def _run_llm(ctx: AssistantContext, message: str, history: list[dict]) -> dict:
         # ran out of rounds; summarize from last tool result
         final_text = tool_results[-1]["text"] if tool_results else "I wasn't able to complete that."
 
-    viz, audit = _aggregate(tool_results)
-    return {"text": final_text, "viz": viz, "audit": audit, "toolCalls": tool_names, "usedLlm": True}
+    vizzes, audit = _aggregate(tool_results)
+    return {"text": final_text, "viz": (vizzes[0] if vizzes else None), "vizzes": vizzes,
+            "audit": audit, "toolCalls": tool_names, "usedLlm": True}
 
 
 # --------------------------------------------------------------------------- #
@@ -166,8 +185,20 @@ def _run_fallback(ctx: AssistantContext, message: str) -> dict:
     region = _find_region(t)
 
     def wrap(result: dict, names: list[str]) -> dict:
-        viz, audit = _aggregate([result])
-        return {"text": result["text"], "viz": viz, "audit": audit, "toolCalls": names, "usedLlm": False}
+        vizzes, audit = _aggregate([result])
+        return {"text": result["text"], "viz": (vizzes[0] if vizzes else None), "vizzes": vizzes,
+                "audit": audit, "toolCalls": names, "usedLlm": False}
+
+    # geographic what-if: exclude a region ("don't recruit in the West") or focus on one
+    # ("only run in the Southeast"). Checked early so it isn't swallowed by the funnel default.
+    if region:
+        if any(k in t for k in ["don't recruit", "dont recruit", "do not recruit", "not recruit", "stop recruit",
+                                "exclude", "without", "drop ", "remove ", "skip ", "avoid ", "leave out",
+                                "no site", "not in the", "outside", "pull out"]):
+            return wrap(TOOL_IMPL["region_impact"](ctx, {"region": region, "mode": "exclude"}), ["region_impact"])
+        if any(k in t for k in ["only", "focus", "concentrate", "solely", "exclusively", "restrict",
+                                "limit to", "exclusive", "just the", "just in", "just run"]):
+            return wrap(TOOL_IMPL["region_impact"](ctx, {"region": region, "mode": "focus"}), ["region_impact"])
 
     # explicit eligible-pool / funnel question -> funnel (reports pool AND biggest constraint)
     if any(k in t for k in ["eligible pool", "recruitable", "funnel", "how many patients", "eligible patients"]) \
@@ -224,8 +255,10 @@ def _run_fallback(ctx: AssistantContext, message: str) -> dict:
         dim = "condition" if "condition" in t or "indication" in t else "state"
         return wrap(TOOL_IMPL["trial_saturation"](ctx, {"dimension": dim}), ["trial_saturation"])
 
-    # referral-network influence
-    if any(k in t for k in ["referral", "pagerank", "network", "most connected", "central"]):
+    # referral-network influence ("which HCP has the most referrals / is most connected")
+    if any(k in t for k in ["refer", "pagerank", "network", "most connected", "central", "hub"]) \
+            or (any(h in t for h in ["hcp", "physician", "provider", "doctor", "prescriber"])
+                and any(k in t for k in ["most", "top", "best", "influen", "connect", "rank"])):
         return wrap(TOOL_IMPL["referral_centrality"](ctx, {"region": region}), ["referral_centrality"])
 
     # whitespace / coverage gap
@@ -273,6 +306,20 @@ def _run_fallback(ctx: AssistantContext, message: str) -> dict:
 # --------------------------------------------------------------------------- #
 
 
+def _llm_error_hint(exc: Exception) -> str:
+    """Turn an OpenAI/LangChain failure into a short, actionable reason for the user."""
+    s = str(exc).lower()
+    if ("not found" in s or "does not exist" in s or "404" in s) and "model" in s:
+        return "the configured OPENAI_MODEL wasn't found — verify it (e.g. gpt-5.2) in backend/.env"
+    if "401" in s or "invalid api key" in s or "incorrect api key" in s or "authentication" in s:
+        return "the OpenAI API key was rejected — check OPENAI_API_KEY"
+    if "429" in s or "rate limit" in s or "quota" in s:
+        return "OpenAI rate limit / quota hit — try again shortly"
+    if "timeout" in s or "timed out" in s or "connection" in s:
+        return "the OpenAI call timed out / couldn't connect"
+    return "the OpenAI call failed"
+
+
 def answer(dataset: Dataset, scenario: ScenarioState, message: str, history: list[dict] | None = None) -> dict:
     ctx = AssistantContext(dataset=dataset, scenario=scenario)
     settings = get_settings()
@@ -282,7 +329,9 @@ def answer(dataset: Dataset, scenario: ScenarioState, message: str, history: lis
             return _run_llm(ctx, message, history)
         except Exception as exc:  # pragma: no cover - network/credential failure
             fb = _run_fallback(ctx, message)
-            fb["text"] = f"(LLM unavailable — used grounded fallback.) {fb['text']}"
+            hint = _llm_error_hint(exc)
+            # Grounded answer is still correct; the note tells the user how to re-enable the LLM.
+            fb["text"] = f"(Answered with the grounded engine — {hint}.) {fb['text']}"
             fb["error"] = str(exc)
             return fb
     return _run_fallback(ctx, message)

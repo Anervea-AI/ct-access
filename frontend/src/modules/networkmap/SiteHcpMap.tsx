@@ -1,9 +1,9 @@
 // Embeddable interactive map for the Site & PI module. Driven entirely by the
-// module's own filters (the sticky SitesToolbar): the SITES shown are the already-
-// filtered ranking set, the catchment radius is the toolbar's "Catchment radius", and
+// module's own filters (the SitesToolbar embedded just above this map): the SITES
+// shown are the already-filtered ranking set, the catchment radius is the "Catchment radius", and
 // the region filter also narrows the HCP layer. The map's only local control is the
 // base-layer HCP density (decile), which has no toolbar equivalent.
-import { useEffect, useMemo, useReducer, useState } from "react";
+import { useEffect, useMemo, useReducer, useState, type ReactNode } from "react";
 import { Button, Callout, Select, Spinner, cn } from "@/design/primitives";
 import { api } from "@/lib/api";
 import type { MapHcp, MapSiteOut, Site } from "@/types";
@@ -34,13 +34,16 @@ function inRegions(state: string | null | undefined, regions: string[]): boolean
   return regions.length === 0 || regions.includes(regionForState(state));
 }
 
-export function SiteHcpMap({ sites, radiusMiles, regions, onSiteSelected, onHcpSelected, focusHcpNpi }: {
+export function SiteHcpMap({ sites, radiusMiles, regions, onSiteSelected, onHcpSelected, focusHcpNpi, controls, onResetFilters, filtersDirty }: {
   sites: Site[];            // already-filtered ranking set from the module
   radiusMiles: number;       // the single left-rail "Catchment radius"
   regions: string[];         // left-rail region filter
   onSiteSelected?: (id: string | null) => void;
   onHcpSelected?: (npi: number | null) => void;  // notify the module's scorecard
   focusHcpNpi?: number | null;                    // external command to select an HCP
+  controls?: ReactNode;       // module filter pills, rendered inline with the map controls
+  onResetFilters?: () => void; // "Clear selection" also resets the module filters
+  filtersDirty?: boolean;      // keep "Clear selection" enabled while filters differ from defaults
 }) {
   const [st, dispatch] = useReducer(mapReducer, initialMapState);
   const [baseHcps, setBaseHcps] = useState<MapHcp[]>([]);
@@ -95,6 +98,8 @@ export function SiteHcpMap({ sites, radiusMiles, regions, onSiteSelected, onHcpS
   const selectSite = (id: string) => { dispatch({ t: "SELECT_SITE", id }); setShowHcps(true); onSiteSelected?.(id); onHcpSelected?.(null); };
   const selectHcp = (npi: number) => { dispatch({ t: "SELECT_HCP", npi }); onHcpSelected?.(npi); };
   const clear = () => { dispatch({ t: "CLEAR" }); onSiteSelected?.(null); onHcpSelected?.(null); };
+  // the visible "Clear selection" button clears the map selection AND resets filters
+  const clearAll = () => { clear(); onResetFilters?.(); };
 
   // external select command (e.g. clicking a referral connection in the scorecard)
   useEffect(() => {
@@ -117,8 +122,10 @@ export function SiteHcpMap({ sites, radiusMiles, regions, onSiteSelected, onHcpS
 
   return (
     <div>
-      {/* compact toolbar — only the map-specific HCP density control + status */}
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-3">
+      {/* one control strip: module filter pills + map-specific controls + status */}
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-2.5">
+        {controls}
+        {controls && <span className="hidden sm:block h-5 w-px bg-border" />}
         <button
           type="button"
           onClick={() => setShowHcps((v) => !v)}
@@ -137,7 +144,14 @@ export function SiteHcpMap({ sites, radiusMiles, regions, onSiteSelected, onHcpS
           <Select value={String(st.decileMin)} onChange={(v) => dispatch({ t: "SET_DECILE", v: parseInt(v, 10) })}
             options={DECILE_OPTS} />
         </div>
-        <Button variant="secondary" onClick={clear} disabled={st.mode === "idle"}>Clear selection</Button>
+        <Button
+          variant="secondary"
+          onClick={clearAll}
+          disabled={st.mode === "idle" && !filtersDirty}
+          title="Clear the map selection and reset all filters"
+        >
+          Clear selection
+        </Button>
         <span className="text-xs text-text-faint ml-auto">
           {st.mode === "idle" && `Click a site → HCPs within ${radiusMiles} mi · click an HCP → referral network`}
           {st.mode === "site" && `Site mode · ${st.nearbyHcps.length} HCPs within ${radiusMiles} mi (set radius in the filter rail)`}
@@ -151,7 +165,7 @@ export function SiteHcpMap({ sites, radiusMiles, regions, onSiteSelected, onHcpS
             <Spinner /> loading…
           </div>
         )}
-        <div className={cn("h-[560px] w-full")}>
+        <div className={cn("h-[72vh] min-h-[520px] w-full")}>
           <InteractiveMap
             sites={mapSites}
             baseHcps={showHcps ? baseFiltered : []}
@@ -173,6 +187,7 @@ export function SiteHcpMap({ sites, radiusMiles, regions, onSiteSelected, onHcpS
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 mt-2.5">
         <LegendDot color="#9a3412" label="Trial site" />
         <LegendDot color="#ffb74d" label="HCP" />
+        <LegendDot color="#2563eb" label="HCP with referral network" />
         <LegendDot color="#9a3412" label="Selected HCP (network center)" ring />
         <span className="inline-flex items-center gap-1.5 text-xs text-text-muted">
           <span className="inline-block w-5 border-t-2 border-dashed" style={{ borderColor: "#2563eb" }} />

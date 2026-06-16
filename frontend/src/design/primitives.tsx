@@ -79,10 +79,10 @@ export function Kpi({
     success: "text-success-text border-t-[#16a34a]",
   } as const;
   return (
-    <div className={cn("bg-surface border border-border rounded-lg px-4 py-3 border-t-2", colors[accent].split(" ")[1])}>
-      <div className="label-caps text-text-subtle mb-0.5">{label}</div>
-      <div className={cn("kpi-number text-[28px]", colors[accent].split(" ")[0])}>{value}</div>
-      {sub && <div className="text-xs text-text-muted mt-0.5">{sub}</div>}
+    <div className={cn("bg-surface border border-border rounded-lg px-4 py-2.5 border-t-2", colors[accent].split(" ")[1])}>
+      <div className="label-caps text-text-subtle">{label}</div>
+      <div className={cn("kpi-number text-2xl", colors[accent].split(" ")[0])}>{value}</div>
+      {sub && <div className="text-[11px] text-text-muted mt-0.5">{sub}</div>}
     </div>
   );
 }

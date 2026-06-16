@@ -13,14 +13,16 @@ export function ModuleHeader({
   actions?: ReactNode;
 }) {
   return (
-    <div className="flex items-start justify-between gap-4 mb-4">
-      <div>
+    <div className="flex items-start justify-between gap-6 mb-3">
+      <div className="min-w-0">
         <div className="flex items-center gap-2 mb-1">
           <span className="font-mono text-xs text-text-faint">Module {code}</span>
           {priority && <Badge variant={priority === "Demo" ? "primary" : "neutral"}>{priority}</Badge>}
         </div>
-        <h1 className="font-display font-bold text-2xl text-ink leading-tight">{title}</h1>
-        <p className="text-sm text-text-muted mt-1 max-w-2xl">{blurb}</p>
+        <div className="flex items-baseline gap-4 flex-wrap">
+          <h1 className="font-display font-bold text-2xl text-ink leading-tight shrink-0">{title}</h1>
+          {blurb && <p className="text-sm text-text-muted max-w-2xl">{blurb}</p>}
+        </div>
       </div>
       <div className="flex items-center gap-2 shrink-0">{actions}</div>
     </div>

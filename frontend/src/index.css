@@ -155,3 +155,26 @@ input[type="range"]::-moz-range-thumb {
 .leaflet-popup-content {
   margin: 10px 12px;
 }
+
+/* Assistant message Markdown (bold/italic/lists/code/tables/LaTeX) */
+.md-body > :first-child { margin-top: 0; }
+.md-body > :last-child { margin-bottom: 0; }
+.md-body p { margin: 0 0 0.5rem; }
+.md-body strong { font-weight: 700; color: var(--color-ink, #292524); }
+.md-body em { font-style: italic; }
+.md-body ul { list-style: disc; padding-left: 1.25rem; margin: 0.25rem 0 0.5rem; }
+.md-body ol { list-style: decimal; padding-left: 1.25rem; margin: 0.25rem 0 0.5rem; }
+.md-body li { margin: 0.125rem 0; }
+.md-body a { color: var(--color-primary, #9a3412); text-decoration: underline; }
+.md-body h1, .md-body h2, .md-body h3, .md-body h4 { font-weight: 700; line-height: 1.25; margin: 0.6rem 0 0.3rem; }
+.md-body h1 { font-size: 1.05rem; }
+.md-body h2 { font-size: 1rem; }
+.md-body h3 { font-size: 0.95rem; }
+.md-body :not(pre) > code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.85em; background: var(--color-inset, #f3ecdf); padding: 0.05rem 0.3rem; border-radius: 0.25rem; word-break: break-word; }
+.md-body pre { background: var(--color-muted, #f5efe4); padding: 0.6rem 0.7rem; border-radius: 0.4rem; overflow-x: auto; margin: 0.5rem 0; font-size: 0.8rem; }
+.md-body pre code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.md-body blockquote { border-left: 3px solid var(--color-border, #e7dcc9); padding-left: 0.6rem; color: var(--color-text-muted, #6b7280); margin: 0.4rem 0; }
+.md-body table { border-collapse: collapse; width: 100%; margin: 0.5rem 0; font-size: 0.8rem; }
+.md-body th, .md-body td { border: 1px solid var(--color-border, #e7dcc9); padding: 0.25rem 0.5rem; text-align: left; }
+.md-body th { background: var(--color-muted, #f5efe4); font-weight: 600; }
+.md-body hr { border: 0; border-top: 1px solid var(--color-border, #e7dcc9); margin: 0.6rem 0; }

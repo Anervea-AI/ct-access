@@ -485,7 +485,8 @@ export interface VizSpec {
 
 export interface ChatResponse {
   text: string;
-  viz: VizSpec | null;
+  viz: VizSpec | null;        // first viz (back-compat)
+  vizzes?: VizSpec[] | null;  // all tool vizzes (agentic multi-tool answers)
   audit: AuditBlock[];
   toolCalls: string[];
   usedLlm: boolean;

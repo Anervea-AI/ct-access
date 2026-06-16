@@ -156,6 +156,61 @@ def tool_rank_sites(ctx: AssistantContext, args: dict) -> dict:
     }
 
 
+def tool_region_impact(ctx: AssistantContext, args: dict) -> dict:
+    """Geographic what-if: dropping a region (exclude) or recruiting only there (focus)."""
+    region = args.get("region")
+    mode = (args.get("mode") or "exclude").lower()
+    filters = ctx.scenario.siteFilters.model_copy(deep=True)
+    filters.regions = []  # evaluate across ALL regions for a clean geographic split
+    funnel = compute_funnel(ctx.scenario.criteria, ctx.dataset.totalUniverse, ctx.dataset.distributions)
+    res = compute_sites(ctx.dataset.sites, funnel.eligiblePool, filters)
+    in_region = [s for s in res.sites if s.region == region]
+    out_region = [s for s in res.sites if s.region != region]
+    elig_in = sum(s.eligiblePatients for s in in_region)
+    elig_out = sum(s.eligiblePatients for s in out_region)
+    total = (elig_in + elig_out) or 1
+
+    def plural(n: int) -> str:
+        return "" if n == 1 else "s"
+
+    if mode == "focus":
+        kept = in_region
+        text = (
+            f"Recruiting only in the {region}: {len(in_region)} site{plural(len(in_region))} covering "
+            f"~{elig_in:,} of the {total:,} site-covered eligible patients ({elig_in / total * 100:.0f}%). "
+            f"You'd forgo {len(out_region)} site{plural(len(out_region))} (~{elig_out:,}) in the other regions."
+        )
+        bars = [{"label": f"{region} (kept)", "value": elig_in}, {"label": "Other regions (forgone)", "value": elig_out}]
+        kept_lbl = f"{region} only"
+    else:
+        kept = out_region
+        text = (
+            f"Not recruiting in the {region} drops {len(in_region)} site{plural(len(in_region))} and "
+            f"~{elig_in:,} site-covered eligible patients ({elig_in / total * 100:.0f}% of the {total:,} total). "
+            f"You'd retain {len(out_region)} site{plural(len(out_region))} across the other regions, covering ~{elig_out:,}."
+        )
+        bars = [{"label": "Retained", "value": elig_out}, {"label": f"Dropped ({region})", "value": elig_in}]
+        kept_lbl = f"without {region}"
+
+    rows = [
+        {"Rank": i + 1, "Site": s.name, "Region": s.region, "Eligible": s.eligiblePatients,
+         "PI trials": s.piExperienceTrials, "Score": s.score}
+        for i, s in enumerate(kept[:10])
+    ]
+    return {
+        "text": text,
+        "data": {
+            "region": region, "mode": mode,
+            "eligibleInRegion": elig_in, "eligibleOtherRegions": elig_out,
+            "sitesInRegion": len(in_region), "sitesOtherRegions": len(out_region),
+            "keptSites": [s.model_dump() for s in kept[:10]],
+        },
+        "viz": {"type": "bar", "title": f"Site-covered eligible patients — {kept_lbl}",
+                "valueLabel": "eligible patients", "data": bars},
+        "audit": [_audit("eligible_patients_site")],
+    }
+
+
 def tool_forecast_enrollment(ctx: AssistantContext, args: dict) -> dict:
     inp = ctx.scenario.forecast.model_copy(deep=True)
     if args.get("screenFailRate") is not None:
@@ -316,6 +371,14 @@ class RankSitesArgs(BaseModel):
     limit: Optional[int] = Field(None, description="Max sites to return (default 10).")
 
 
+class RegionImpactArgs(BaseModel):
+    region: Region = Field(..., description="The region to analyze.")
+    mode: Literal["exclude", "focus"] = Field(
+        "exclude",
+        description="'exclude' = what if we do NOT recruit there (the default for 'don't recruit in X'); "
+                    "'focus' = recruit ONLY there.")
+
+
 class ForecastArgs(BaseModel):
     screenFailRate: Optional[float] = Field(None, description="Fraction 0-1, e.g. 0.35.")
     numSites: Optional[int] = Field(None, description="Number of active sites.")
@@ -360,6 +423,11 @@ TOOL_REGISTRY: list[tuple[str, str, type[BaseModel], Callable[[AssistantContext,
     ("rank_sites",
      "Rank trial sites for the current scenario, with optional region / minEligible / diversityTargets filters.",
      RankSitesArgs, tool_rank_sites),
+    ("region_impact",
+     "Geographic what-if: the impact of NOT recruiting in a region (mode=exclude) or recruiting ONLY in a region "
+     "(mode=focus) — sites and eligible patients dropped vs retained. Use for 'what if we don't recruit in the West', "
+     "'only run in the Southeast', 'drop the Midwest'.",
+     RegionImpactArgs, tool_region_impact),
     ("forecast_enrollment",
      "Forecast enrollment and last-patient-in, with what-ifs for screenFailRate, numSites, targetDate. Also returns sites needed to hit the target date.",
      ForecastArgs, tool_forecast_enrollment),

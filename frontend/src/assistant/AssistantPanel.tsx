@@ -4,6 +4,7 @@ import { useUi } from "@/state/ui";
 import { api } from "@/lib/api";
 import type { AuditBlock, VizSpec } from "@/types";
 import { VizRenderer } from "./VizRenderer";
+import { Markdown } from "./Markdown";
 import { AuditPanel } from "./AuditPanel";
 import { Spinner, cn } from "@/design/primitives";
 import { CloseIcon, ExpandIcon, SendIcon, SparkleIcon } from "@/design/icons";
@@ -12,6 +13,7 @@ interface Msg {
   role: "user" | "assistant";
   content: string;
   viz?: VizSpec | null;
+  vizzes?: VizSpec[] | null;
   audit?: AuditBlock[];
   toolCalls?: string[];
   usedLlm?: boolean;
@@ -49,7 +51,7 @@ export function AssistantPanel() {
       setMessages((prev) => [
         ...prev,
         {
-          role: "assistant", content: res.text, viz: res.viz, audit: res.audit,
+          role: "assistant", content: res.text, viz: res.viz, vizzes: res.vizzes, audit: res.audit,
           toolCalls: res.toolCalls, usedLlm: res.usedLlm, error: res.error,
         },
       ]);
@@ -116,8 +118,10 @@ export function AssistantPanel() {
               </div>
             ) : (
               <div className="bg-surface border border-border rounded-2xl rounded-bl-sm px-3.5 py-2.5 text-sm text-ink max-w-[92%] w-full">
-                <p className="whitespace-pre-wrap leading-relaxed">{m.content}</p>
-                {m.viz && <VizRenderer viz={m.viz} />}
+                <Markdown>{m.content}</Markdown>
+                {(m.vizzes && m.vizzes.length ? m.vizzes : m.viz ? [m.viz] : []).map((v, k) => (
+                  <VizRenderer key={k} viz={v} />
+                ))}
                 {m.audit && <AuditPanel audit={m.audit} />}
                 {m.toolCalls && m.toolCalls.length > 0 && (
                   <div className="mt-2 flex flex-wrap gap-1">

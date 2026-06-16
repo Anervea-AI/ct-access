@@ -24,12 +24,15 @@ export function siteIcon(dimmed = false): L.DivIcon {
   });
 }
 
-// `hasReferrals` is accepted for call-site compatibility but no longer changes the
-// marker — referral HCPs render the same as any other HCP (no blue dotted ring).
+const REFERRAL = "#2563eb"; // matches the referral-edge color
+
+// HCPs that participate in the referral graph are filled BLUE; ordinary HCPs stay gold.
+// (selection / network-center states still take visual priority.)
 export function hcpIcon(opts: { selected?: boolean; center?: boolean; hasReferrals?: boolean } = {}): L.DivIcon {
   const r = opts.center ? 9 : 6;
-  const fill = opts.center ? CENTER : opts.selected ? HCP_SEL : HCP;
-  const stroke = opts.center ? "#ffffff" : "#9a3412";
+  const hasRef = !!opts.hasReferrals && !opts.center && !opts.selected;
+  const fill = opts.center ? CENTER : opts.selected ? HCP_SEL : hasRef ? REFERRAL : HCP;
+  const stroke = opts.center ? "#ffffff" : hasRef ? "#1e40af" : "#9a3412";
   const size = (r + 3) * 2;
   const c = size / 2;
   return L.divIcon({

@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from functools import lru_cache
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -19,6 +20,17 @@ class Settings(BaseSettings):
     # "db" uses the real RWD SQLite warehouse; "synthetic" forces the generator.
     # "auto" (default) picks db when alfadev.db exists, else synthetic.
     data_source: str = "auto"
+
+    @field_validator("openai_api_key", mode="before")
+    @classmethod
+    def _clean_api_key(cls, v: object) -> str:
+        """Tolerate common .env paste mistakes: surrounding quotes/whitespace and a
+        leading 'OPENAI_API_KEY=' accidentally included in the value (which would
+        otherwise be sent to OpenAI verbatim and 401)."""
+        s = str(v or "").strip().strip('"').strip("'").strip()
+        if s.upper().startswith("OPENAI_API_KEY="):
+            s = s.split("=", 1)[1].strip()
+        return s
 
     @property
     def cors_origin_list(self) -> list[str]:

@@ -1,7 +1,19 @@
 """Assistant fallback (no-LLM) behavior: grounded, returns viz + audit, never empty numbers."""
 from __future__ import annotations
 
+import pytest
+
+from app.assistant import agent as agent_mod
 from app.assistant.agent import answer
+
+
+@pytest.fixture(autouse=True)
+def _force_fallback(monkeypatch):
+    """These tests cover the deterministic (no-LLM) router — force it regardless of
+    any OPENAI_API_KEY in the dev environment so they stay hermetic and fast."""
+    class _Stub:
+        llm_enabled = False
+    monkeypatch.setattr(agent_mod, "get_settings", lambda: _Stub())
 
 
 def test_funnel_query(dataset, base_scenario):
@@ -35,3 +47,16 @@ def test_forecast_query(dataset, base_scenario):
     r = answer(dataset, base_scenario, "Show the forecast if screen fail rises to 35%")
     assert r["toolCalls"] == ["forecast_enrollment"]
     assert r["viz"]["type"] == "line"
+
+
+def test_region_exclude_whatif(dataset, base_scenario):
+    r = answer(dataset, base_scenario, "what if I don't recruit in the West?")
+    assert r["toolCalls"] == ["region_impact"]
+    assert r["viz"]["type"] == "bar"
+    assert "West" in r["text"] and "retain" in r["text"].lower()
+
+
+def test_region_focus_whatif(dataset, base_scenario):
+    r = answer(dataset, base_scenario, "what if we only run in the Southeast?")
+    assert r["toolCalls"] == ["region_impact"]
+    assert "Southeast" in r["text"]

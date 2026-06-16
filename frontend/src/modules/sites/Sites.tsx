@@ -17,6 +17,7 @@ import { HcpProfileCard } from "@/modules/networkmap/HcpProfileCard";
 export function Sites() {
   const ds = useStore((s) => s.dataset)!;
   const scenario = useStore((s) => s.scenarios[s.activeId]);
+  const updateActive = useStore((s) => s.updateActive);
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [selectedHcpNpi, setSelectedHcpNpi] = useState<number | null>(null);
@@ -24,6 +25,23 @@ export function Sites() {
 
   // selecting a site (map / leaderboard / shortlist) clears any HCP shown in the scorecard
   const selectSite = (id: string | null) => { setSelectedId(id); setSelectedHcpNpi(null); };
+
+  // "Clear selection" (in the map controls) now also resets all filters to defaults
+  const f = scenario.siteFilters;
+  const filtersDirty =
+    f.catchmentRadiusMiles !== 50 || f.minEligible !== 0 || f.piExperienceMin !== 0 ||
+    f.regions.length > 0 || f.specialties.length > 0 || f.diversityWeight > 0 ||
+    (f.diversityTargets.blackPct ?? 0) > 0 || (f.diversityTargets.hispanicPct ?? 0) > 0;
+  const resetFilters = () =>
+    updateActive((s) => {
+      s.siteFilters.catchmentRadiusMiles = 50;
+      s.siteFilters.minEligible = 0;
+      s.siteFilters.piExperienceMin = 0;
+      s.siteFilters.regions = [];
+      s.siteFilters.specialties = [];
+      s.siteFilters.diversityWeight = 0;
+      s.siteFilters.diversityTargets = {};
+    });
 
   const ranking = useMemo(() => deriveSites(ds, scenario), [ds, scenario]);
   const eligiblePool = useMemo(() => deriveFunnel(ds, scenario).eligiblePool, [ds, scenario]);
@@ -98,10 +116,8 @@ export function Sites() {
         }
       />
 
-      <SitesToolbar />
-
-      {/* Results — full width (filters now live in the sticky toolbar above) */}
-      <div className="space-y-4 min-w-0">
+      {/* Results — full width (filters live in the map card, with the map controls) */}
+      <div className="space-y-3 min-w-0">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <Kpi label="Eligible pool" value={fmtInt(eligiblePool)} accent="primary" sub="from feasibility cascade" />
             <Kpi label="Sites matching" value={sites.length} accent="accent" sub={`of ${ds.sites.length} total`} />
@@ -110,7 +126,7 @@ export function Sites() {
           </div>
 
           <Card>
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center justify-between mb-2.5">
               <SectionLabel>Geographic footprint — sites, HCPs & referral network</SectionLabel>
               <AskChip query="Which high-volume HCPs sit within 50 miles of my top site?" label="Ask" />
             </div>
@@ -121,6 +137,9 @@ export function Sites() {
               onSiteSelected={selectSite}
               onHcpSelected={setSelectedHcpNpi}
               focusHcpNpi={selectedHcpNpi}
+              controls={<SitesToolbar embedded />}
+              onResetFilters={resetFilters}
+              filtersDirty={filtersDirty}
             />
           </Card>
 
