@@ -1,6 +1,5 @@
 # Python
 backend/.venv/
-backend/app/data/*.db
 __pycache__/
 *.pyc
 .pytest_cache/
