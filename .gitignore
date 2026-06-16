@@ -14,10 +14,11 @@ frontend/dist/
 backend/.env
 frontend/.env
 
-# Excel data files
+# Excel / CSV data files
 *.xlsx
 *.xls
 *.xlsm
+*.csv
 
 # OS / editor
 .DS_Store
