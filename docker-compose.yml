@@ -4,9 +4,6 @@ networks:
   ct-net:
     driver: bridge
 
-volumes:
-  ct_db_data:
-
 services:
   ct-backend:
     container_name: ct_backend
@@ -20,8 +17,6 @@ services:
       - CORS_ORIGINS=http://localhost:9800,http://127.0.0.1:9800
     ports:
       - "9801:8000"
-    volumes:
-      - ct_db_data:/app/app/data
     networks:
       - ct-net
     healthcheck:
